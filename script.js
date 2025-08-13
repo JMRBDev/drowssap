@@ -9,7 +9,7 @@ const CHARACTER_SETS = {
   lowercase: "abcdefghijklmnopqrstuvwxyz",
   uppercase: "ABCDEFGHIJKLMNOPQRSTUVWXYZ",
   numbers: "0123456789",
-  symbols: "!@#$%^&*()_+-=[]{}|;:,.<>?",
+  symbols: "!@#$%^&*()_+-=[]{};:,.<>?",
   ambiguous: "l1I0Oo",
 };
 
