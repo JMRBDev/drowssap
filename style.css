@@ -28,7 +28,7 @@
   --primary-foreground: oklch(0.2 0 0);
   --secondary: oklch(0.72 0 0);
   --secondary-foreground: oklch(0.56 0 0);
-  --input: oklch(0.92 0 0);
+  --input: oklch(0.97 0.00 0);
   --card: oklch(0.92 0 0);
   --border: oklch(0.72 0 0 / 0.3);
   --success: oklch(0.43 0.09 167);
@@ -97,6 +97,25 @@ body {
     padding: 2rem;
   }
 
+  & .background-gradient {
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    background-image: radial-gradient(circle at 30% 70%,
+        rgba(173, 216, 230, 0.35),
+        transparent 60%),
+      radial-gradient(circle at 70% 30%,
+        rgba(255, 182, 193, 0.4),
+        transparent 60%);
+  }
+
+  &.dark .background-gradient {
+    background: radial-gradient(ellipse 80% 60% at 50% 0%,
+        rgba(102, 98, 95, 0.25),
+        transparent 70%),
+      transparent;
+  }
+
   & input[type="range"] {
     width: 100%;
     appearance: none;
@@ -121,7 +140,7 @@ body {
       width: 1.4rem;
       aspect-ratio: 1;
       margin-top: -0.2rem;
-      background: var(--success);
+      background: var(--info);
       border-radius: 50%;
       border: 2px solid var(--border);
       cursor: pointer;
@@ -138,7 +157,7 @@ body {
       width: 1.4rem;
       aspect-ratio: 1;
       margin-top: -0.2rem;
-      background: var(--success);
+      background: var(--info);
       border-radius: 50%;
       border: 2px solid var(--border);
       cursor: pointer;
@@ -168,7 +187,6 @@ body {
     max-width: 75ch;
     margin: 0 auto;
     border-radius: var(--border-radius);
-    background-color: var(--background);
     color: var(--foreground);
 
     @media (max-width: 480px) {
@@ -231,10 +249,6 @@ body {
             &:hover {
               background-color: var(--primary);
             }
-
-            &:disabled {
-              opacity: 0.5;
-            }
           }
         }
       }
@@ -253,11 +267,6 @@ body {
         cursor: pointer;
         transition: background-color 0.2s ease-in-out,
           transform 0.2s ease-in-out;
-
-        &:hover {
-          background-color: var(--secondary);
-          transform: scale(1.05);
-        }
 
         &:active {
           transform: scale(0.95);
@@ -293,7 +302,6 @@ body {
           border-radius: calc(0.8rem - var(--border-radius));
           position: relative;
           overflow: hidden;
-          filter: contrast(0.8);
           background-color: var(--input);
           border: 1px solid var(--border);
 
@@ -306,7 +314,7 @@ body {
             height: 100%;
             background: linear-gradient(120deg,
                 rgba(255, 255, 255, 0) 0%,
-                rgba(255, 255, 255, 0.6) 50%,
+                rgba(255, 255, 255, 0.4) 50%,
                 rgba(255, 255, 255, 0) 100%);
             animation: shine 2s infinite;
           }
@@ -472,14 +480,11 @@ body {
               background-color: var(--input);
               color: var(--foreground);
               overflow: hidden;
-              transition: background-color 0.2s ease-in-out,
-                color 0.2s ease-in-out;
+              transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
 
               &:hover {
                 transform: translate3d(0.05rem, -0.05rem, 0);
                 box-shadow: -0.15rem 0.15rem 0.1rem 0.05rem rgba(0, 0, 0, 0.1);
-                transition: transform 0.2s ease-in-out,
-                  box-shadow 0.2s ease-in-out;
               }
 
               & label {
@@ -494,13 +499,8 @@ body {
 
               &:has(input[type="checkbox"]:checked),
               &:has(input[type="radio"]:checked) {
-                background-color: var(--success);
-                color: var(--success-foreground);
-              }
-
-              &:hover {
-                background-color: var(--primary);
-                color: var(--primary-foreground);
+                background-color: var(--info);
+                color: var(--info-foreground);
               }
 
               &:has(input[type="checkbox"]:disabled),
@@ -508,7 +508,7 @@ body {
                 opacity: 0.6;
                 background-color: var(--secondary);
                 color: var(--primary-foreground);
-                position: relative;
+                box-shadow: none;
               }
 
               &:has(input[type="checkbox"]:disabled):hover,
