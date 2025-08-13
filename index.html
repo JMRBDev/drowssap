@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Secure Password Generator &mdash; JMRBDev</title>
+
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body class="dark">
+    <header>
+        <h1 id="title">Password Generator</h1>
+        <p id="subtitle">Create secure passwords instantly.</p>
+    </header>
+
+    <main>
+        <div class="generation-container">
+            <div class="input-container">
+                <label for="generated-password" class="sr-only">Generated Password</label>
+                <input id="generated-password" name="generated-password" type="text" readonly
+                    aria-label="Generated password" aria-describedby="password-strength" />
+
+                <div class="actions">
+                    <button id="copy-btn" disabled aria-label="Copy password to clipboard"
+                        title="Copy password (Ctrl+C)">
+                        <img src="assets/copy.svg" alt="" />
+                    </button>
+
+                    <button id="generate-btn" aria-label="Generate new password" title="Generate new password (Ctrl+G)">
+                        <img src="assets/reload.svg" alt="" />
+                    </button>
+                </div>
+            </div>
+
+            <button id="settings-btn" aria-label="Open password settings" title="Password settings">
+                <img src="assets/cog.svg" alt="" />
+            </button>
+        </div>
+
+        <div class="password-info">
+            <div class="strength-meter" id="password-strength" role="status" aria-live="polite">
+                <div class="character-count">
+                    <span class="strength-label"></span>
+                    &mdash;
+                    <span id="char-count">0</span> characters
+                </div>
+                <div class="strength-bar" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0">
+                    <div class="strength-fill"></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="bottom-sheet-container">
+            <div class="bottom-sheet">
+                <div class="handle"></div>
+
+                <div class="bottom-sheet-body">
+                    <h2>Settings</h2>
+
+                    <section id="length-section">
+                        <h3>Password length</h3>
+                        <div class="slider-container" id="password-length-slider-container">
+                            <span class="slider-label"></span>
+                            <input type="range" min="8" max="128" value="16" id="password-length-slider" />
+                        </div>
+                    </section>
+
+                    <section id="password-type-section">
+                        <h3>Password type</h3>
+
+                        <ul>
+                            <li>
+                                <input type="radio" name="password-type" id="random-radio" value="random" checked />
+                                <label for="random-radio">Random</label>
+                            </li>
+                            <li>
+                                <input type="radio" name="password-type" value="memorable" id="memorable-radio" />
+                                <label for="memorable-radio">Memorable</label>
+                            </li>
+                            <li>
+                                <input type="radio" name="password-type" id="pin-radio" value="pin" />
+                                <label for="pin-radio">PIN</label>
+                            </li>
+                        </ul>
+                    </section>
+
+                    <section id="characters-section">
+                        <h3>Included characters</h3>
+                        <p class="character-help" id="character-help">Select which character types to include in your
+                            password.</p>
+                        <ul>
+                            <li>
+                                <input type="checkbox" id="lowercase-checkbox" />
+                                <label for="lowercase-checkbox">Lowercase letters</label>
+                            </li>
+                            <li>
+                                <input type="checkbox" id="uppercase-checkbox" />
+                                <label for="uppercase-checkbox">Uppercase letters</label>
+                            </li>
+                            <li>
+                                <input type="checkbox" id="numbers-checkbox" />
+                                <label for="numbers-checkbox">Numbers</label>
+                            </li>
+                            <li>
+                                <input type="checkbox" id="symbols-checkbox" />
+                                <label for="symbols-checkbox">Symbols</label>
+                            </li>
+                            <li>
+                                <input type="checkbox" id="ambiguous-characters-checkbox" />
+                                <label for="ambiguous-characters-checkbox">Ambiguous characters</label>
+                            </li>
+                        </ul>
+                    </section>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script src="script.js"></script>
+</body>
+
+</html>
