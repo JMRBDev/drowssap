@@ -41,44 +41,6 @@
       "form_factor": "wide"
     }
   ],
-  "shortcuts": [
-    {
-      "name": "Generate random password",
-      "short_name": "Random",
-      "url": "/?type=random",
-      "icons": [
-        {
-          "src": "/assets/icons/shortcut-random.png",
-          "sizes": "96x96",
-          "type": "image/png"
-        }
-      ]
-    },
-    {
-      "name": "Memorable passphrase",
-      "short_name": "Memorable",
-      "url": "/?type=memorable",
-      "icons": [
-        {
-          "src": "/assets/icons/shortcut-memorable.png",
-          "sizes": "96x96",
-          "type": "image/png"
-        }
-      ]
-    },
-    {
-      "name": "Generate PIN",
-      "short_name": "PIN",
-      "url": "/?type=pin",
-      "icons": [
-        {
-          "src": "/assets/icons/shortcut-pin.png",
-          "sizes": "96x96",
-          "type": "image/png"
-        }
-      ]
-    }
-  ],
   "launch_handler": {
     "client_mode": "navigate-existing"
   },
