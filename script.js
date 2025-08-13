@@ -48,41 +48,38 @@ const PASSWORD_TYPE_CONFIG = {
   },
 };
 
+const $ = (id) => document.querySelector(id);
+const $$ = (id) => document.querySelectorAll(id);
+
 const ui = {
-  passwordInput: document.querySelector("#generated-password"),
-  strengthFill: document.querySelector(".strength-fill"),
-  strengthLabel: document.querySelector(".strength-label"),
-  strengthBar: document.querySelector(".strength-bar"),
-  charCount: document.querySelector("#char-count"),
-  copyButton: document.querySelector("#copy-btn"),
-  settingsSheet: document.querySelector(".bottom-sheet-container"),
+  passwordInput: $("#generated-password"),
+  strengthFill: $(".strength-fill"),
+  strengthLabel: $(".strength-label"),
+  strengthBar: $(".strength-bar"),
+  charCount: $("#char-count"),
+  copyButton: $("#copy-btn"),
+  settingsSheet: $(".bottom-sheet-container"),
   sliders: {
-    length: document.querySelector("#password-length-slider"),
-    words: document.querySelector("#words-count-slider"),
+    length: $("#password-length-slider"),
+    words: $("#words-count-slider"),
   },
   sliderContainers: {
-    length: document.querySelector("#password-length-slider-container"),
-    words: document.querySelector("#words-count-slider-container"),
+    length: $("#password-length-slider-container"),
+    words: $("#words-count-slider-container"),
   },
   sliderLabels: {
-    length: document.querySelector(
-      "#password-length-slider-container .slider-label"
-    ),
-    words: document.querySelector(
-      "#words-count-slider-container .slider-label"
-    ),
+    length: $("#password-length-slider-container .slider-label"),
+    words: $("#words-count-slider-container .slider-label"),
   },
-  characterHelp: document.querySelector("#character-help"),
+  characterHelp: $("#character-help"),
   checkboxes: Object.fromEntries(
     ["lowercase", "uppercase", "numbers", "symbols", "ambiguous"].map((id) => [
       id,
-      document.querySelector(`#${id}-checkbox`),
+      $(`#${id}-checkbox`),
     ])
   ),
-  typeRadios: Array.from(
-    document.querySelectorAll('input[name="password-type"]')
-  ),
-  themeRadios: Array.from(document.querySelectorAll('input[name="theme"]')),
+  typeRadios: Array.from($$('input[name="password-type"]')),
+  themeRadios: Array.from($$('input[name="theme"]')),
 };
 
 /* Utilities */
@@ -323,12 +320,13 @@ document.addEventListener("DOMContentLoaded", async () => {
   loadSettings();
   updateUIForPasswordType(false);
 
-  document
-    .querySelector("#generate-btn")
-    .addEventListener("click", generatePassword);
-  document
-    .querySelector("#settings-btn")
-    .addEventListener("click", () => ui.settingsSheet.classList.toggle("open"));
+  $("#generate-btn").addEventListener("click", generatePassword);
+  $("#settings-btn").addEventListener("click", () =>
+    ui.settingsSheet.classList.toggle("open")
+  );
+  $("#close-bottom-sheet").addEventListener("click", () =>
+    ui.settingsSheet.classList.remove("open")
+  );
   ui.settingsSheet.addEventListener(
     "click",
     (e) =>

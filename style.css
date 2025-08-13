@@ -3,7 +3,8 @@
   font-style: normal;
   font-display: swap;
   font-weight: 100 900;
-  src: url(https://cdn.jsdelivr.net/fontsource/fonts/geist:vf@latest/latin-wght-normal.woff2) format("woff2-variations");
+  src: url(https://cdn.jsdelivr.net/fontsource/fonts/geist:vf@latest/latin-wght-normal.woff2)
+    format("woff2-variations");
   unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA,
     U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193,
     U+2212, U+2215, U+FEFF, U+FFFD;
@@ -14,7 +15,8 @@
   font-style: normal;
   font-display: swap;
   font-weight: 100 900;
-  src: url(https://cdn.jsdelivr.net/fontsource/fonts/geist-mono:vf@latest/latin-wght-normal.woff2) format("woff2-variations");
+  src: url(https://cdn.jsdelivr.net/fontsource/fonts/geist-mono:vf@latest/latin-wght-normal.woff2)
+    format("woff2-variations");
   unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA,
     U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193,
     U+2212, U+2215, U+FEFF, U+FFFD;
@@ -28,7 +30,7 @@
   --primary-foreground: oklch(0.2 0 0);
   --secondary: oklch(0.72 0 0);
   --secondary-foreground: oklch(0.56 0 0);
-  --input: oklch(0.97 0.00 0);
+  --input: oklch(0.97 0 0);
   --card: oklch(0.92 0 0);
   --border: oklch(0.72 0 0 / 0.3);
   --success: oklch(0.43 0.09 167);
@@ -44,6 +46,8 @@
   --breakpoint-md: 768px;
   --breakpoint-lg: 992px;
   --breakpoint-xl: 1200px;
+  --font-sans: "Geist Variable", ui-sans-serif, system-ui, -apple-system;
+  --font-mono: "Geist Mono Variable", ui-monospace, monospace;
 
   & .dark {
     --background: oklch(0.14 0 0);
@@ -82,7 +86,7 @@ html {
 }
 
 body {
-  font-family: Geist Variable, ui-sans-serif, system-ui, -apple-system;
+  font-family: var(--font-sans);
   background-color: var(--background);
   color: var(--foreground);
   display: flex;
@@ -101,18 +105,24 @@ body {
     position: absolute;
     inset: 0;
     z-index: -1;
-    background-image: radial-gradient(circle at 30% 70%,
+    background-image: radial-gradient(
+        circle at 30% 70%,
         rgba(173, 216, 230, 0.35),
-        transparent 60%),
-      radial-gradient(circle at 70% 30%,
+        transparent 60%
+      ),
+      radial-gradient(
+        circle at 70% 30%,
         rgba(255, 182, 193, 0.4),
-        transparent 60%);
+        transparent 60%
+      );
   }
 
   &.dark .background-gradient {
-    background: radial-gradient(ellipse 80% 60% at 50% 0%,
+    background: radial-gradient(
+        ellipse 80% 60% at 50% 0%,
         rgba(102, 98, 95, 0.25),
-        transparent 70%),
+        transparent 70%
+      ),
       transparent;
   }
 
@@ -169,20 +179,20 @@ body {
     }
   }
 
-  &>header {
+  & > header {
     text-align: center;
     margin-bottom: 1rem;
 
-    &>h1 {
+    & > h1 {
       font-weight: bold;
     }
 
-    &>p {
+    & > p {
       color: var(--secondary-foreground);
     }
   }
 
-  &>main {
+  & > main {
     width: 100%;
     max-width: 75ch;
     margin: 0 auto;
@@ -211,7 +221,11 @@ body {
         min-height: 2.5rem;
         flex: 1;
 
-        &>input {
+        & #generated-password {
+          font-family: var(--font-mono);
+        }
+
+        & > input {
           background-color: transparent;
           border: none;
           flex: 1;
@@ -227,13 +241,13 @@ body {
           }
         }
 
-        &>.actions {
+        & > .actions {
           display: flex;
           gap: 0.25rem;
           align-items: center;
           padding: 0.3rem;
 
-          &>button {
+          & > button {
             display: flex;
             align-items: center;
             justify-content: center;
@@ -265,8 +279,7 @@ body {
         aspect-ratio: 1;
         box-shadow: 0 0.2rem 0.3rem rgba(0, 0, 0, 0.1);
         cursor: pointer;
-        transition: background-color 0.2s ease-in-out,
-          transform 0.2s ease-in-out;
+        transition: transform 0.2s ease-in-out;
 
         &:active {
           transform: scale(0.95);
@@ -312,10 +325,12 @@ body {
             left: -50%;
             width: 50%;
             height: 100%;
-            background: linear-gradient(120deg,
-                rgba(255, 255, 255, 0) 0%,
-                rgba(255, 255, 255, 0.4) 50%,
-                rgba(255, 255, 255, 0) 100%);
+            background: linear-gradient(
+              120deg,
+              rgba(255, 255, 255, 0) 0%,
+              rgba(255, 255, 255, 0.4) 50%,
+              rgba(255, 255, 255, 0) 100%
+            );
             animation: shine 2s infinite;
           }
 
@@ -424,7 +439,7 @@ body {
               height: 2rem;
 
               & .slider-label {
-                font-family: "Geist Mono Variable", ui-monospace, monospace;
+                font-family: var(--font-mono);
                 font-variant-numeric: tabular-nums;
                 width: 3.5ch;
               }
@@ -480,7 +495,8 @@ body {
               background-color: var(--input);
               color: var(--foreground);
               overflow: hidden;
-              transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+              transition: transform 0.2s ease-in-out,
+                box-shadow 0.2s ease-in-out;
 
               &:hover {
                 transform: translate3d(0.05rem, -0.05rem, 0);

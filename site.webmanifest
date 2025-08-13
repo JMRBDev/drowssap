@@ -1,0 +1,88 @@
+{
+  "id": "/password-generator/",
+  "name": "Secure Password Generator — JMRBDev",
+  "short_name": "PWD",
+  "description": "Generate strong, unique passwords instantly. Random, memorable passphrases, or PINs with adjustable length and character sets. Runs fully client-side.",
+  "lang": "en",
+  "dir": "ltr",
+  "start_url": "/password-generator/?utm_source=web_app_manifest",
+  "scope": "/password-generator/",
+  "display": "standalone",
+  "display_override": ["standalone", "minimal-ui"],
+  "orientation": "any",
+  "theme_color": "#0a0a0a",
+  "background_color": "#0a0a0a",
+  "categories": ["utilities", "productivity", "security", "tools"],
+  "icons": [
+    {
+      "src": "/assets/icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/assets/icons/icon-192-maskable.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "maskable"
+    },
+    {
+      "src": "/assets/icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    }
+  ],
+  "screenshots": [
+    {
+      "src": "https://pwd.jmrb.dev/assets/og/password-generator.png",
+      "type": "image/png",
+      "sizes": "1200x630",
+      "label": "Password generator main screen",
+      "form_factor": "wide"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Generate random password",
+      "short_name": "Random",
+      "url": "/password-generator/?type=random",
+      "icons": [
+        {
+          "src": "/assets/icons/shortcut-random.png",
+          "sizes": "96x96",
+          "type": "image/png"
+        }
+      ]
+    },
+    {
+      "name": "Memorable passphrase",
+      "short_name": "Memorable",
+      "url": "/password-generator/?type=memorable",
+      "icons": [
+        {
+          "src": "/assets/icons/shortcut-memorable.png",
+          "sizes": "96x96",
+          "type": "image/png"
+        }
+      ]
+    },
+    {
+      "name": "Generate PIN",
+      "short_name": "PIN",
+      "url": "/password-generator/?type=pin",
+      "icons": [
+        {
+          "src": "/assets/icons/shortcut-pin.png",
+          "sizes": "96x96",
+          "type": "image/png"
+        }
+      ]
+    }
+  ],
+  "launch_handler": {
+    "client_mode": "navigate-existing"
+  },
+  "handle_links": "preferred",
+  "prefer_related_applications": false
+}
