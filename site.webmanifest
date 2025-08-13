@@ -1,12 +1,11 @@
 {
-  "id": "/password-generator/",
   "name": "Secure Password Generator — JMRBDev",
   "short_name": "PWD",
   "description": "Generate strong, unique passwords instantly. Random, memorable passphrases, or PINs with adjustable length and character sets. Runs fully client-side.",
   "lang": "en",
   "dir": "ltr",
-  "start_url": "/password-generator/?utm_source=web_app_manifest",
-  "scope": "/password-generator/",
+  "start_url": "/?utm_source=web_app_manifest",
+  "scope": "/",
   "display": "standalone",
   "display_override": ["standalone", "minimal-ui"],
   "orientation": "any",
@@ -46,7 +45,7 @@
     {
       "name": "Generate random password",
       "short_name": "Random",
-      "url": "/password-generator/?type=random",
+      "url": "/?type=random",
       "icons": [
         {
           "src": "/assets/icons/shortcut-random.png",
@@ -58,7 +57,7 @@
     {
       "name": "Memorable passphrase",
       "short_name": "Memorable",
-      "url": "/password-generator/?type=memorable",
+      "url": "/?type=memorable",
       "icons": [
         {
           "src": "/assets/icons/shortcut-memorable.png",
@@ -70,7 +69,7 @@
     {
       "name": "Generate PIN",
       "short_name": "PIN",
-      "url": "/password-generator/?type=pin",
+      "url": "/?type=pin",
       "icons": [
         {
           "src": "/assets/icons/shortcut-pin.png",
