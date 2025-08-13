@@ -1,20 +1,21 @@
-/* Password Generator — Readable Refactor */
+/* Password Generator - Refactored */
+
+const SETTINGS_STORAGE_KEY = "passwordGeneratorSettings";
+const wordlist = new Map();
+let currentPassword = "";
 
 const CHARACTER_SETS = {
   lowercase: "abcdefghijklmnopqrstuvwxyz",
   uppercase: "ABCDEFGHIJKLMNOPQRSTUVWXYZ",
   numbers: "0123456789",
-  symbols: "!@#$%^&*()_+-=[]{}|;:,.<>?",
+  symbols: "!@#$%^&*()_+-=[]{}|:,.<>?",
   ambiguous: "l1I0Oo",
 };
 
 const STRENGTH_LABELS = {
   0: "Awful",
-  10: "Awful",
   20: "Very weak",
-  30: "Very weak",
   40: "Weak",
-  50: "Weak",
   60: "Average",
   70: "Good",
   80: "Strong",
@@ -23,567 +24,350 @@ const STRENGTH_LABELS = {
 };
 
 const PASSWORD_TYPE_CONFIG = {
-  pin: {
-    checkboxes: {
-      lowercase: false,
-      uppercase: false,
-      numbers: true,
-      symbols: false,
-      ambiguous: false,
-    },
-    disabled: {
-      lowercase: true,
-      uppercase: true,
-      numbers: true,
-      symbols: true,
-      ambiguous: true,
-    },
-    helpText:
-      "PIN passwords only use numbers (0-9). All other types are disabled.",
-    sliderMin: 4,
-    sliderDefault: 4,
+  random: {
+    slider: "length",
+    min: 8,
+    default: 16,
+    help: "Select character types to include.",
+    disabled: [],
   },
   memorable: {
-    checkboxes: {
-      lowercase: true,
-      uppercase: true,
-      numbers: false,
-      symbols: false,
-      ambiguous: false,
-    },
-    disabled: {
-      lowercase: false,
-      uppercase: false,
-      numbers: true,
-      symbols: true,
-      ambiguous: true,
-    },
-    helpText:
-      "Memorable passwords only use readable words separated by hyphens.",
-    sliderMin: 8,
-    sliderDefault: 16,
+    slider: "words",
+    min: 2,
+    default: 4,
+    help: "Uses dictionary words.",
+    disabled: ["numbers", "symbols", "ambiguous"],
   },
-  random: {
-    checkboxes: {
-      lowercase: true,
-      uppercase: true,
-      numbers: true,
-      symbols: true,
-      ambiguous: false,
-    },
-    disabled: {
-      lowercase: false,
-      uppercase: false,
-      numbers: false,
-      symbols: false,
-      ambiguous: false,
-    },
-    helpText: "Select which character types to include in your password.",
-    sliderMin: 8,
-    sliderDefault: 16,
+  pin: {
+    slider: "length",
+    min: 4,
+    default: 4,
+    help: "Only uses numbers.",
+    disabled: ["lowercase", "uppercase", "symbols", "ambiguous"],
   },
 };
 
-const select = (q, ctx = document) => ctx.querySelector(q);
-const selectAll = (q, ctx = document) => Array.from(ctx.querySelectorAll(q));
+const $ = (id) => document.querySelector(id);
+const $$ = (id) => document.querySelectorAll(id);
 
 const ui = {
-  passwordInput: select("#generated-password"),
-  strengthFill: select(".strength-fill"),
-  strengthLabel: select(".strength-label"),
-  strengthBar: select(".strength-bar"),
-  lengthSlider: select("#password-length-slider"),
-  lengthLabel: select("#password-length-slider-container .slider-label"),
-  settingsButton: select("#settings-btn"),
-  copyButton: select("#copy-btn"),
-  generateButton: select("#generate-btn"),
-  bottomSheet: select(".bottom-sheet-container"),
-  charCount: select("#char-count"),
-  characterHelp: select("#character-help"),
-  typeRadios: selectAll('input[name="password-type"]'),
-  checkboxes: {
-    lowercase: select("#lowercase-checkbox"),
-    uppercase: select("#uppercase-checkbox"),
-    numbers: select("#numbers-checkbox"),
-    symbols: select("#symbols-checkbox"),
-    ambiguous: select("#ambiguous-characters-checkbox"),
+  passwordInput: $("#generated-password"),
+  strengthFill: $(".strength-fill"),
+  strengthLabel: $(".strength-label"),
+  strengthBar: $(".strength-bar"),
+  closeBottomSheet: $(".close-bottom-sheet"),
+  charCount: $("#char-count"),
+  copyButton: $("#copy-btn"),
+  settingsSheet: $(".bottom-sheet-container"),
+  sliders: {
+    length: $("#password-length-slider"),
+    words: $("#words-count-slider"),
   },
+  sliderContainers: {
+    length: $("#password-length-slider-container"),
+    words: $("#words-count-slider-container"),
+  },
+  sliderLabels: {
+    length: $("#password-length-slider-container .slider-label"),
+    words: $("#words-count-slider-container .slider-label"),
+  },
+  characterHelp: $("#character-help"),
+  checkboxes: Object.fromEntries(
+    ["lowercase", "uppercase", "numbers", "symbols", "ambiguous"].map((id) => [
+      id,
+      $(`#${id}-checkbox`),
+    ])
+  ),
+  typeRadios: Array.from($$('input[name="password-type"]')),
+  themeRadios: Array.from($$('input[name="theme"]')),
 };
 
-const SETTINGS_STORAGE_KEY = "passwordGeneratorSettings";
-let currentPassword = "";
-
-const DICTIONARY_WORDS = [
-  "apple",
-  "banana",
-  "cherry",
-  "dragon",
-  "eagle",
-  "forest",
-  "garden",
-  "house",
-  "island",
-  "jungle",
-  "knight",
-  "lemon",
-  "mountain",
-  "ocean",
-  "planet",
-  "queen",
-  "river",
-  "sunset",
-  "tiger",
-  "umbrella",
-  "village",
-  "window",
-  "yellow",
-  "zebra",
-];
-
-/* RNG utilities */
-const secureRandomFloat = () => {
-  const buf = new Uint32Array(1);
-  crypto.getRandomValues(buf);
-  return buf[0] / (0xffffffff + 1);
-};
-
+/* Utilities */
+const secureRandomFloat = () =>
+  crypto.getRandomValues(new Uint32Array(1))[0] / (0xffffffff + 1);
 const randomIntInclusive = (min, max) =>
   Math.floor(secureRandomFloat() * (max - min + 1)) + min;
-
 const fisherYatesShuffle = (arr) => {
-  const copy = [...arr];
-  for (let i = copy.length - 1; i > 0; i--) {
+  for (let i = arr.length - 1; i > 0; i--) {
     const j = randomIntInclusive(0, i);
-    [copy[i], copy[j]] = [copy[j], copy[i]];
+    [arr[i], arr[j]] = [arr[j], arr[i]];
   }
-  return copy;
+  return arr;
 };
+const rollDice = () => randomIntInclusive(1, 6);
 
-/* UI state helpers */
-const getSelectedPasswordType = () =>
-  ui.typeRadios.find((r) => r.checked)?.value || "random";
-
-const getCharacterOptions = () => ({
-  lowercase: ui.checkboxes.lowercase.checked,
-  uppercase: ui.checkboxes.uppercase.checked,
-  numbers: ui.checkboxes.numbers.checked,
-  symbols: ui.checkboxes.symbols.checked,
-  ambiguous: ui.checkboxes.ambiguous.checked,
-});
-
-const applyCheckboxStates = (checkedMap, disabledMap) => {
-  for (const key of Object.keys(ui.checkboxes)) {
-    if (checkedMap && key in checkedMap) {
-      ui.checkboxes[key].checked = checkedMap[key];
-    }
-    if (disabledMap && key in disabledMap) {
-      ui.checkboxes[key].disabled = disabledMap[key];
-    }
-  }
-};
-
-const updateLengthUI = (value, min) => {
-  if (typeof min === "number") ui.lengthSlider.min = String(min);
-  if (typeof value === "number") ui.lengthSlider.value = String(value);
-  ui.lengthLabel.textContent = ui.lengthSlider.value;
-};
-
-const getStrengthLabel = (score) =>
-  STRENGTH_LABELS[Math.floor(score / 10) * 10] || STRENGTH_LABELS[100];
-
-/* Settings apply/load/save */
-const applyPasswordTypeConfigToUI = (type, opts = {}) => {
-  const cfg = PASSWORD_TYPE_CONFIG[type] || PASSWORD_TYPE_CONFIG.random;
-  const { preserveChars = false, preserveLength = false } = opts;
-
-  ui.characterHelp.textContent = cfg.helpText;
-  applyCheckboxStates(null, cfg.disabled);
-
-  if (!preserveChars) applyCheckboxStates(cfg.checkboxes, null);
-
-  const parsed = parseInt(ui.lengthSlider.value, 10);
-  const hasLength = Number.isFinite(parsed) && parsed > 0;
-  const currentLen = hasLength ? parsed : 0;
-  const min = cfg.sliderMin ?? 8;
-
-  if (preserveLength) {
-    updateLengthUI(Math.max(currentLen, min), min);
-  } else {
-    const desired = cfg.sliderDefault ?? Math.max(currentLen || min, min);
-    updateLengthUI(desired, min);
-  }
-};
-
-const getSettingsFromUI = () => ({
-  passwordType: getSelectedPasswordType(),
-  passwordLength: parseInt(ui.lengthSlider.value, 10),
-  characters: getCharacterOptions(),
-});
-
-const applySettingsToUI = (settings, { preserveChars = true } = {}) => {
-  const type = settings.passwordType || "random";
-  const radio = select(`input[name="password-type"][value="${type}"]`);
-  if (radio) radio.checked = true;
-
-  const cfg = PASSWORD_TYPE_CONFIG[type] || PASSWORD_TYPE_CONFIG.random;
-  const len = parseInt(settings.passwordLength, 10);
-  const hasValidLength = Number.isFinite(len) && len > 0;
-
-  if (hasValidLength) {
-    updateLengthUI(len, undefined);
-  } else {
-    const fallback = cfg.sliderDefault ?? cfg.sliderMin ?? 8;
-    updateLengthUI(fallback, undefined);
-  }
-
-  // Enforce min for the selected type:
-  // - Non-PIN types clamp to >= sliderMin (8)
-  // - PIN clamps to >= 4
-  applyPasswordTypeConfigToUI(type, {
-    preserveChars,
-    preserveLength: true,
-  });
-
-  if (preserveChars) applyCheckboxStates(settings.characters, null);
-};
-
-const saveSettings = () =>
-  localStorage.setItem(
-    SETTINGS_STORAGE_KEY,
-    JSON.stringify(getSettingsFromUI())
-  );
-
-const loadSettings = () => {
-  const raw = localStorage.getItem(SETTINGS_STORAGE_KEY);
-  if (!raw) return false;
+/* Core Logic */
+async function loadWordlist() {
   try {
-    const settings = JSON.parse(raw);
-    applySettingsToUI(settings, { preserveChars: true });
-    return true;
-  } catch {
-    return false;
+    const response = await fetch("assets/wordlist.txt");
+    if (!response.ok) throw new Error("Network response was not ok");
+    const data = await response.text();
+    data.split("\n").forEach((line) => {
+      const [key, word] = line.trim().split("\t");
+      if (key && word) wordlist.set(key, word);
+    });
+    if (!wordlist.size) throw new Error("Wordlist is empty.");
+    ui.typeRadios.find((r) => r.value === "memorable").disabled = false;
+  } catch (error) {
+    console.error("Failed to load wordlist:", error);
+    const memorableRadio = ui.typeRadios.find((r) => r.value === "memorable");
+    if (memorableRadio) {
+      memorableRadio.disabled = true;
+      if (memorableRadio.checked) {
+        ui.typeRadios.find((r) => r.value === "random").checked = true;
+        updateUIForPasswordType(false);
+      }
+    }
   }
-};
+}
 
-/* Password generation */
-const ensureUppercaseWhenEnabled = (password, allowAmbiguous) => {
-  if (!ui.checkboxes.uppercase?.checked) return password;
-  if (/[A-Z]/.test(password)) return password;
+const getSettings = () => ({
+  type: ui.typeRadios.find((r) => r.checked)?.value || "random",
+  length: parseInt(ui.sliders.length.value, 10),
+  words: parseInt(ui.sliders.words.value, 10),
+  theme: ui.themeRadios.find((r) => r.checked)?.value || "system",
+  ...Object.fromEntries(
+    Object.entries(ui.checkboxes).map(([key, cb]) => [key, cb.checked])
+  ),
+});
 
-  const lowercaseIndex = password
-    .split("")
-    .findIndex(
-      (ch) =>
-        /[a-z]/.test(ch) && (allowAmbiguous || !/[IO]/.test(ch.toUpperCase()))
-    );
-
-  if (lowercaseIndex !== -1) {
-    return (
-      password.slice(0, lowercaseIndex) +
-      password[lowercaseIndex].toUpperCase() +
-      password.slice(lowercaseIndex + 1)
-    );
-  }
-
-  const uppercasePool = allowAmbiguous
-    ? CHARACTER_SETS.uppercase
-    : CHARACTER_SETS.uppercase.replace(/[IO]/g, "");
-  const chars = password.split("");
-  chars[randomIntInclusive(0, chars.length - 1)] =
-    uppercasePool[randomIntInclusive(0, uppercasePool.length - 1)];
-  return chars.join("");
-};
-
-const buildSelectedCharacterSets = () => {
-  const options = getCharacterOptions();
-  const sets = [];
-  if (options.lowercase) sets.push(CHARACTER_SETS.lowercase);
-  if (options.uppercase) sets.push(CHARACTER_SETS.uppercase);
-  if (options.numbers) sets.push(CHARACTER_SETS.numbers);
-  if (options.symbols) sets.push(CHARACTER_SETS.symbols);
-
-  if (options.ambiguous) {
-    sets.push(CHARACTER_SETS.ambiguous);
+function applyTheme(theme) {
+  if (theme === "system") {
+    const prefersDark = window.matchMedia(
+      "(prefers-color-scheme: dark)"
+    ).matches;
+    document.body.classList.toggle("dark", prefersDark);
   } else {
-    for (let i = 0; i < sets.length; i++) {
-      sets[i] = sets[i].replace(/[l1I0Oo]/g, "");
-    }
+    document.body.classList.toggle("dark", theme === "dark");
   }
-  return sets;
-};
+}
 
-const generatePin = (length) => {
-  let pin = "";
-  for (let i = 0; i < length; i++) {
-    pin += randomIntInclusive(0, 9);
-  }
-  return pin;
-};
+function updateUIForPasswordType(fromInteraction = true) {
+  const settings = getSettings();
+  const config = PASSWORD_TYPE_CONFIG[settings.type];
 
-const generateRandomPassword = (length, characterSets) => {
-  if (!characterSets.length)
-    throw new Error("At least one character set required");
-  let password = "";
-  const baseCount = Math.floor(length / characterSets.length);
-  const remainder = length % characterSets.length;
+  ui.characterHelp.textContent = config.help;
+  Object.values(ui.checkboxes).forEach((cb) => (cb.disabled = false));
+  config.disabled.forEach((id) => (ui.checkboxes[id].disabled = true));
 
-  characterSets.forEach((set, index) => {
-    const count = baseCount + (index < remainder ? 1 : 0);
-    for (let i = 0; i < count; i++) {
-      password += set[randomIntInclusive(0, set.length - 1)];
-    }
+  Object.keys(ui.sliderContainers).forEach((key) => {
+    ui.sliderContainers[key].style.display =
+      key === config.slider ? "" : "none";
   });
 
-  return fisherYatesShuffle(password.split("")).join("");
-};
+  const slider = ui.sliders[config.slider];
+  const label = ui.sliderLabels[config.slider];
+  slider.min = config.min;
 
-const generateMemorablePassword = (length, options) => {
-  const opts = options || getCharacterOptions();
-
-  if (!opts.lowercase && !opts.uppercase) opts.lowercase = true;
-
-  let result = "";
-  const targetLength = Math.max(1, length);
-
-  while (result.length < targetLength) {
-    let word =
-      DICTIONARY_WORDS[randomIntInclusive(0, DICTIONARY_WORDS.length - 1)];
-
-    if (!opts.lowercase && opts.uppercase) word = word.toUpperCase();
-
-    if (opts.lowercase && opts.uppercase && secureRandomFloat() > 0.5) {
-      const candidateIndices = [];
-      for (let i = 0; i < word.length; i++) {
-        const upper = word[i].toUpperCase();
-        if (!opts.ambiguous && (upper === "I" || upper === "O")) continue;
-        candidateIndices.push(i);
-      }
-      if (candidateIndices.length) {
-        const idx =
-          candidateIndices[randomIntInclusive(0, candidateIndices.length - 1)];
-        word =
-          word.slice(0, idx) + word[idx].toUpperCase() + word.slice(idx + 1);
-      }
+  if (fromInteraction) {
+    let value = settings[config.slider] || config.default;
+    if (value < config.min) {
+      value = config.min;
     }
-
-    if (result.length) result += "-";
-    result += word;
-
-    if (result.length >= targetLength) break;
+    slider.value = value;
   }
 
-  while (result.length < targetLength) {
-    const pools = [];
-    if (opts.lowercase) pools.push(CHARACTER_SETS.lowercase);
-    if (opts.uppercase) pools.push(CHARACTER_SETS.uppercase);
-    if (!pools.length) pools.push(CHARACTER_SETS.lowercase);
+  label.textContent = slider.value;
 
-    const pool = pools[randomIntInclusive(0, pools.length - 1)];
-    const ch = pool[randomIntInclusive(0, pool.length - 1)];
-    if (!opts.ambiguous && CHARACTER_SETS.ambiguous.includes(ch)) continue;
-    result += ch;
-  }
+  saveAndGenerate();
+}
 
-  return result.slice(0, targetLength);
-};
+function saveAndGenerate() {
+  localStorage.setItem(SETTINGS_STORAGE_KEY, JSON.stringify(getSettings()));
+  generatePassword();
+}
 
-const generatePassword = () => {
-  const type = getSelectedPasswordType();
-  const length = parseInt(ui.lengthSlider.value, 10);
+function generatePassword() {
+  const settings = getSettings();
   let password = "";
 
   try {
-    switch (type) {
-      case "pin":
-        password = generatePin(length);
-        break;
-      case "memorable":
-        password = generateMemorablePassword(length, getCharacterOptions());
-        password = ensureUppercaseWhenEnabled(
-          password,
-          ui.checkboxes.ambiguous.checked
-        );
-        break;
-      case "random":
-      default: {
-        const sets = buildSelectedCharacterSets();
-        password = sets.length
-          ? generateRandomPassword(length, sets)
-          : generateRandomPassword(length, [
-              CHARACTER_SETS.lowercase,
-              CHARACTER_SETS.numbers,
-            ]);
-        password = ensureUppercaseWhenEnabled(
-          password,
-          ui.checkboxes.ambiguous.checked
-        );
-        break;
+    if (settings.type === "pin") {
+      password = Array.from({ length: settings.length }, () =>
+        randomIntInclusive(0, 9)
+      ).join("");
+    } else if (settings.type === "memorable") {
+      const words = Array.from({ length: settings.words }, () => {
+        let word = "";
+        while (!word)
+          word = wordlist.get(
+            Array.from({ length: 5 }, () => rollDice()).join("")
+          );
+        if (settings.uppercase && !settings.lowercase)
+          return word.toUpperCase();
+        if (settings.uppercase && settings.lowercase) {
+          return [...word]
+            .map((c) => (secureRandomFloat() > 0.5 ? c.toUpperCase() : c))
+            .join("");
+        }
+        return word;
+      });
+      password = words.join("-");
+    } else {
+      // random
+      const charPool = Object.entries(settings)
+        .filter(([key, value]) => value && CHARACTER_SETS[key])
+        .map(([key]) =>
+          settings.ambiguous
+            ? CHARACTER_SETS[key]
+            : CHARACTER_SETS[key].replace(/[l1I0Oo]/g, "")
+        )
+        .join("");
+
+      if (charPool) {
+        password = fisherYatesShuffle(
+          Array.from(
+            { length: settings.length },
+            () => charPool[randomIntInclusive(0, charPool.length - 1)]
+          )
+        ).join("");
+      } else {
+        password = fisherYatesShuffle(
+          Array.from(
+            { length: settings.length },
+            () =>
+              "abcdefghijklmnopqrstuvwxyz0123456789"[randomIntInclusive(0, 35)]
+          )
+        ).join("");
       }
     }
   } catch (err) {
     console.error("Error generating password:", err);
-    password = "password123";
+    password = "error-generating";
   }
 
   currentPassword = password;
   ui.passwordInput.value = password;
   updateStrengthUI();
-  updateCopyButtonState();
-};
+  ui.copyButton.disabled = !password;
+}
 
-/* Strength meter */
-const calculatePasswordStrength = (password) => {
-  if (!password) return 0;
-
-  let score = 0;
-  const length = password.length;
-
-  // Length up to 40 points
-  score += Math.min(40, length * 4);
-
-  // Variety up to 40 points
-  const variety =
-    (/[a-z]/.test(password) ? 1 : 0) +
-    (/[A-Z]/.test(password) ? 1 : 0) +
-    (/\d/.test(password) ? 1 : 0) +
-    (/[^a-zA-Z0-9]/.test(password) ? 1 : 0);
-  score += variety * 10;
-
-  // Bonuses
-  if (variety >= 3 && length >= 8) score += 10;
-  if (length >= 12) score += 10;
-
-  // Penalties
-  if (/(.)\1{2,}/.test(password)) score -= 10;
-  if (
-    /(abc|bcd|cde|def|efg|fgh|ghi|hij|ijk|jkl|klm|lmn|mno|nop|opq|pqr|qrs|rst|stu|tuv|uvw|vwx|wxy|xyz|012|123|234|345|456|567|678|789)/i.test(
-      password
-    )
-  ) {
-    score -= 15;
-  }
-
-  return Math.max(0, Math.min(100, score));
-};
-
-const updateStrengthUI = () => {
+function updateStrengthUI() {
   const password = ui.passwordInput.value || "";
-  const score = calculatePasswordStrength(password);
-
-  ui.strengthFill.classList.remove("weak", "average", "strong");
-  if (score < 60) ui.strengthFill.classList.add("weak");
-  else if (score < 80) ui.strengthFill.classList.add("average");
-  else ui.strengthFill.classList.add("strong");
-
-  const label = getStrengthLabel(score);
-  ui.strengthLabel.innerText = label;
-  ui.strengthFill.style.width = `${score}%`;
-  ui.charCount.textContent = String(password.length);
-
-  if (ui.strengthBar) {
-    ui.strengthBar.setAttribute("aria-valuenow", String(score));
-    ui.strengthBar.setAttribute(
-      "aria-label",
-      `Password strength: ${label} (${score}%)`
-    );
+  let score = 0;
+  if (password.length > 0) {
+    score += Math.min(40, password.length * 2.5);
+    const variety = new Set(password).size;
+    score += Math.min(40, variety * 1.5);
+    if (/[a-z]/.test(password)) score += 5;
+    if (/[A-Z]/.test(password)) score += 5;
+    if (/".\d."/.test(password)) score += 5;
+    if (/[^a-zA-Z0-9]/.test(password)) score += 5;
   }
-};
+  score = Math.max(0, Math.min(100, score));
 
-const updateCopyButtonState = () => {
-  ui.copyButton.disabled = !currentPassword;
-};
+  const strength = score < 40 ? "weak" : score < 80 ? "average" : "strong";
+  ui.strengthFill.className = `strength-fill ${strength}`;
+  ui.strengthFill.style.width = `${score}%`;
+  ui.strengthLabel.textContent =
+    STRENGTH_LABELS[Math.floor(score / 10) * 10] || "Awful";
+  ui.charCount.textContent = `${password.length} characters`;
+  ui.strengthBar.setAttribute("aria-valuenow", score);
+}
 
-/* Clipboard */
-const copyPasswordToClipboard = async () => {
+async function copyToClipboard() {
   if (!currentPassword) return;
   try {
     await navigator.clipboard.writeText(currentPassword);
     const original = ui.copyButton.innerHTML;
-    ui.copyButton.innerHTML = '<img src="/assets/check.svg" alt="" />';
-    ui.copyButton.disabled = true;
+    ui.copyButton.innerHTML =
+      '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><g fill="none" fill-rule="evenodd"><path d="M24 0v24H0V0zM12.593 23.258l-.011.002-.071.035-.02.004-.014-.004-.071-.035c-.01-.004-.019-.001-.024.005l-.004.01-.017.428.005.02.01.013.104.074.015.004.012-.004.104-.074.012-.016.004-.017-.017-.427c-.002-.01-.009-.017-.017-.018m.265-.113-.013.002-.185.093-.01.01-.003.011.018.43.005.012.008.007.201.093c.012.004.023 0 .029-.008l.004-.014-.034-.614c-.003-.012-.01-.02-.02-.022m-.715.002a.023.023 0 0 0-.027.006l-.006.014-.034.614c0 .012.007.02.017.024l.015-.002.201-.093.01-.008.004-.011.017-.43-.003-.012-.01-.01z"/><path fill="var(--success)" d="M21.192 5.465a1 1 0 0 1 0 1.414L9.95 18.122a1.1 1.1 0 0 1-1.556 0l-5.586-5.586a1 1 0 1 1 1.415-1.415l4.95 4.95L19.777 5.465a1 1 0 0 1 1.414 0Z"/></g></svg>';
     setTimeout(() => {
       ui.copyButton.innerHTML = original;
       ui.copyButton.disabled = false;
     }, 2000);
   } catch (e) {
-    console.error("Failed to copy password:", e);
-    ui.passwordInput.select();
-    document.execCommand("copy");
+    console.error("Failed to copy:", e);
   }
-};
+}
 
-/* Bottom sheet (settings) */
-const toggleSettingsSheet = () => ui.bottomSheet.classList.toggle("open");
-const handleSheetOutsideClick = (event) => {
-  if (event.target === ui.bottomSheet) ui.bottomSheet.classList.remove("open");
-};
+function loadSettings() {
+  const settings = JSON.parse(
+    localStorage.getItem(SETTINGS_STORAGE_KEY) || "{}"
+  );
+  if (settings.type) {
+    ui.typeRadios.find((r) => r.value === settings.type).checked = true;
+    Object.keys(ui.checkboxes).forEach(
+      (id) => (ui.checkboxes[id].checked = !!settings[id])
+    );
 
-/* Events */
-const registerEventListeners = () => {
-  ui.passwordInput.addEventListener("input", updateStrengthUI);
+    const config = PASSWORD_TYPE_CONFIG[settings.type];
+    ui.sliders[config.slider].value = settings[config.slider] || config.default;
 
-  ui.lengthSlider.addEventListener("input", () => {
-    ui.lengthLabel.textContent = ui.lengthSlider.value;
-    saveSettings();
-  });
-  ui.lengthSlider.addEventListener("change", generatePassword);
+    const otherSlider = config.slider === "length" ? "words" : "length";
+    const otherConfig =
+      PASSWORD_TYPE_CONFIG[otherSlider === "length" ? "random" : "memorable"];
+    ui.sliders[otherSlider].value =
+      settings[otherSlider] || otherConfig.default;
+  }
+  if (settings.theme) {
+    ui.themeRadios.find((r) => r.value === settings.theme).checked = true;
+    applyTheme(settings.theme);
+  } else {
+    applyTheme("system");
+  }
+}
 
-  ui.generateButton.addEventListener("click", generatePassword);
-  ui.copyButton.addEventListener("click", copyPasswordToClipboard);
-  ui.settingsButton.addEventListener("click", toggleSettingsSheet);
-  ui.bottomSheet.addEventListener("click", handleSheetOutsideClick);
+/* Initialization */
+document.addEventListener("DOMContentLoaded", async () => {
+  await loadWordlist();
+  loadSettings();
+  updateUIForPasswordType(false);
 
-  Object.values(ui.checkboxes).forEach((checkbox) => {
-    checkbox.addEventListener("change", () => {
-      if (checkbox.disabled) return;
-      saveSettings();
-      generatePassword();
-    });
-  });
+  $("#generate-btn").addEventListener("click", generatePassword);
+  $("#settings-btn").addEventListener("click", () =>
+    ui.settingsSheet.classList.toggle("open")
+  );
+  $("#close-bottom-sheet").addEventListener("click", () =>
+    ui.settingsSheet.classList.remove("open")
+  );
+  ui.settingsSheet.addEventListener(
+    "click",
+    (e) =>
+      e.target === ui.settingsSheet && ui.settingsSheet.classList.remove("open")
+  );
+  ui.copyButton.addEventListener("click", copyToClipboard);
 
   ui.typeRadios.forEach((radio) =>
+    radio.addEventListener("change", () => updateUIForPasswordType(true))
+  );
+  Object.values(ui.checkboxes).forEach((cb) =>
+    cb.addEventListener("change", saveAndGenerate)
+  );
+  Object.values(ui.sliders).forEach((slider) => {
+    slider.addEventListener("input", () => {
+      const sliderId = slider.id.includes("length") ? "length" : "words";
+      ui.sliderLabels[sliderId].textContent = slider.value;
+    });
+    slider.addEventListener("change", saveAndGenerate);
+  });
+  ui.themeRadios.forEach((radio) =>
     radio.addEventListener("change", () => {
-      const type = getSelectedPasswordType();
-      applyPasswordTypeConfigToUI(type, {
-        preserveChars: false,
-        preserveLength: false,
-      });
-      saveSettings();
-      generatePassword();
+      const theme = ui.themeRadios.find((r) => r.checked).value;
+      applyTheme(theme);
+      saveAndGenerate();
     })
   );
 
-  document.addEventListener("keydown", (event) => {
-    if (!(event.ctrlKey || event.metaKey)) return;
-    if (event.key === "g") {
-      event.preventDefault();
-      generatePassword();
-    } else if (
-      event.key === "c" &&
-      document.activeElement === ui.passwordInput
-    ) {
-      event.preventDefault();
-      copyPasswordToClipboard();
-    }
-  });
-};
-
-/* Init */
-const initializeApp = () => {
-  if (!loadSettings()) {
-    const defaultType = "random";
-    const radio = select(`input[name="password-type"][value="${defaultType}"]`);
-    if (radio) radio.checked = true;
-
-    applyPasswordTypeConfigToUI(defaultType, {
-      preserveChars: false,
-      preserveLength: false, // uses sliderDefault for the type
+  window
+    .matchMedia("(prefers-color-scheme: dark)")
+    .addEventListener("change", () => {
+      const settings = getSettings();
+      if (settings.theme === "system") {
+        applyTheme("system");
+      }
     });
 
-    saveSettings();
-  }
-  registerEventListeners();
-  generatePassword();
-};
-
-initializeApp();
+  document.addEventListener("keydown", (e) => {
+    if (e.ctrlKey || e.metaKey) {
+      if (e.key === "g") {
+        e.preventDefault();
+        generatePassword();
+      }
+      if (e.key === "c") {
+        e.preventDefault();
+        copyToClipboard();
+      }
+    }
+  });
+});
