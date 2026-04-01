@@ -1,575 +1,642 @@
-@font-face {
-  font-family: "Geist Variable";
-  font-style: normal;
-  font-display: swap;
-  font-weight: 100 900;
-  src: url(https://cdn.jsdelivr.net/fontsource/fonts/geist:vf@latest/latin-wght-normal.woff2)
-    format("woff2-variations");
-  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA,
-    U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193,
-    U+2212, U+2215, U+FEFF, U+FFFD;
-}
-
-@font-face {
-  font-family: "Geist Mono Variable";
-  font-style: normal;
-  font-display: swap;
-  font-weight: 100 900;
-  src: url(https://cdn.jsdelivr.net/fontsource/fonts/geist-mono:vf@latest/latin-wght-normal.woff2)
-    format("woff2-variations");
-  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA,
-    U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193,
-    U+2212, U+2215, U+FEFF, U+FFFD;
-}
+/* =====================================================
+   Windows 2000 Theme — Secure Password Generator
+   ===================================================== */
 
 :root {
-  --border-radius: 0.5rem;
-  --background: oklch(0.97 0 0);
-  --foreground: oklch(0.14 0 0);
-  --primary: oklch(0.87 0 0);
-  --primary-foreground: oklch(0.2 0 0);
-  --secondary: oklch(0.72 0 0);
-  --secondary-foreground: oklch(0.56 0 0);
-  --input: oklch(0.97 0 0);
-  --card: oklch(0.92 0 0);
-  --border: oklch(0.72 0 0 / 0.3);
-  --success: oklch(0.43 0.09 167);
-  --success-foreground: oklch(0.85 0.13 165);
-  --info: oklch(0.45 0.08 224);
-  --info-foreground: oklch(0.87 0.12 207);
-  --warning: oklch(0.47 0.12 46);
-  --warning-foreground: oklch(0.96 0.06 96);
-  --danger: oklch(0.45 0.17 14);
-  --danger-foreground: oklch(0.81 0.11 12);
-  --breakpoint-xs: 0;
-  --breakpoint-sm: 576px;
-  --breakpoint-md: 768px;
-  --breakpoint-lg: 992px;
-  --breakpoint-xl: 1200px;
-  --font-sans: "Geist Variable", ui-sans-serif, system-ui, -apple-system;
-  --font-mono: "Geist Mono Variable", ui-monospace, monospace;
+  /* Win2k color palette */
+  --win-desktop:      #008080;     /* Classic teal desktop */
+  --win-silver:       #d4d0c8;     /* Window chrome / silver */
+  --win-silver-dark:  #a8a090;     /* Darker silver for shadows */
+  --win-silver-light: #ffffff;     /* Highlight / white */
+  --win-silver-mid:   #c0c0c0;     /* Mid grey */
+  --win-blue-title:   #0a246a;     /* Title bar start */
+  --win-blue-title2:  #a6caf0;     /* Title bar end */
+  --win-text:         #000000;     /* Body text */
+  --win-text-inv:     #ffffff;     /* Title bar text */
+  --win-text-grey:    #808080;     /* Disabled / secondary text */
+  --win-input-bg:     #ffffff;     /* Input background */
+  --win-select:       #0a246a;     /* Selection / active */
+  --win-select-fg:    #ffffff;
+  --win-danger:       #c0392b;
+  --win-success:      #27ae60;
+  --win-warn:         #e67e22;
+  --win-border-radius: 0px;
 
-  & .dark {
-    --background: oklch(0.14 0 0);
-    --foreground: oklch(0.99 0 0);
-    --primary: oklch(0.27 0 0);
-    --primary-foreground: oklch(0.97 0 0);
-    --secondary: oklch(0.44 0 0);
-    --secondary-foreground: oklch(0.72 0 0);
-    --input: oklch(0.2 0 0);
-    --card: oklch(0.2 0 0);
-    --border: oklch(0.37 0 0 / 0.3);
-    --success: oklch(0.43 0.09 167);
-    --success-foreground: oklch(0.85 0.13 165);
-    --info: oklch(0.45 0.08 224);
-    --info-foreground: oklch(0.87 0.12 207);
-    --warning: oklch(0.47 0.12 46);
-    --warning-foreground: oklch(0.96 0.06 96);
-    --danger: oklch(0.45 0.17 14);
-    --danger-foreground: oklch(0.81 0.11 12);
-  }
+  /* Bevel helpers */
+  --bevel-out:
+    inset 1px 1px 0 #ffffff,
+    inset -1px -1px 0 #808080,
+    inset 2px 2px 0 #d4d0c8,
+    inset -2px -2px 0 #404040;
+  --bevel-in:
+    inset 1px 1px 0 #808080,
+    inset -1px -1px 0 #ffffff,
+    inset 2px 2px 0 #404040,
+    inset -2px -2px 0 #d4d0c8;
+  --bevel-btn:
+    inset 1px 1px 0 #ffffff,
+    inset -1px -1px 0 #404040,
+    inset 2px 2px 0 #d4d0c8,
+    inset -2px -2px 0 #808080;
+  --bevel-btn-pressed:
+    inset 1px 1px 0 #404040,
+    inset -1px -1px 0 #d4d0c8,
+    inset 2px 2px 0 #808080;
+
+  --font-sans: Tahoma, "MS Sans Serif", Arial, sans-serif;
+  --font-mono: "Lucida Console", "Courier New", monospace;
 }
 
-html {
-  box-sizing: border-box;
-  font-size: 100%;
-}
-
-*,
-*::before,
-*::after {
+/* ── Reset ──────────────────────────────────────────── */
+html { box-sizing: border-box; font-size: 100%; }
+*, *::before, *::after {
   box-sizing: inherit;
-  margin: 0;
-  padding: 0;
+  margin: 0; padding: 0;
   font-weight: normal;
   color: inherit;
 }
 
+/* ── Body / Desktop ─────────────────────────────────── */
 body {
   font-family: var(--font-sans);
-  background-color: var(--background);
-  color: var(--foreground);
+  font-size: 11px;
+  background-color: var(--win-desktop);
+  color: var(--win-text);
   display: flex;
   flex-direction: column;
+  align-items: center;
+  justify-content: center;
   min-height: 100dvh;
   width: 100dvw;
-  justify-content: center;
   padding: 1rem;
   overflow: hidden;
 
-  @media (min-width: 768px) {
-    padding: 2rem;
-  }
-
-  & .background-gradient {
-    position: absolute;
-    inset: 0;
-    z-index: -1;
-    background-image: radial-gradient(
-        circle at 30% 70%,
-        rgba(173, 216, 230, 0.35),
-        transparent 60%
-      ),
-      radial-gradient(
-        circle at 70% 30%,
-        rgba(255, 182, 193, 0.4),
-        transparent 60%
-      );
-  }
-
-  &.dark .background-gradient {
-    background: radial-gradient(
-        ellipse 80% 60% at 50% 0%,
-        rgba(102, 98, 95, 0.25),
-        transparent 70%
-      ),
-      transparent;
-  }
-
-  & input[type="range"] {
-    width: 100%;
-    appearance: none;
-    -webkit-appearance: none;
-    height: 1rem;
-    background-color: var(--primary);
-    border-radius: var(--border-radius);
-
-    &::-webkit-slider-runnable-track {
-      height: 1rem;
-      background: transparent;
-    }
-
-    &::-moz-range-track {
-      height: 1rem;
-      background: transparent;
-    }
-
-    &::-webkit-slider-thumb {
-      -webkit-appearance: none;
-      appearance: none;
-      width: 1.4rem;
-      aspect-ratio: 1;
-      margin-top: -0.2rem;
-      background: var(--info);
-      border-radius: 50%;
-      border: 2px solid var(--border);
-      cursor: pointer;
-      transition: transform 0.2s ease, box-shadow 0.2s ease;
-    }
-
-    &::-webkit-slider-thumb:hover {
-      transform: scale(1.1);
-    }
-
-    &::-moz-range-thumb {
-      -webkit-appearance: none;
-      appearance: none;
-      width: 1.4rem;
-      aspect-ratio: 1;
-      margin-top: -0.2rem;
-      background: var(--info);
-      border-radius: 50%;
-      border: 2px solid var(--border);
-      cursor: pointer;
-      transition: transform 0.2s ease, box-shadow 0.2s ease;
-    }
-
-    &::-moz-range-thumb:hover {
-      transform: scale(1.1);
-    }
-  }
-
-  & > header {
-    text-align: center;
-    margin-bottom: 1rem;
-
-    & > h1 {
-      font-weight: bold;
-    }
-
-    & > p {
-      color: var(--secondary-foreground);
-    }
-  }
-
-  & > main {
-    width: 100%;
-    max-width: 75ch;
-    margin: 0 auto;
-    border-radius: var(--border-radius);
-    color: var(--foreground);
-
-    @media (max-width: 480px) {
-      max-width: 100%;
-    }
-
-    & .generation-container {
-      display: flex;
-      gap: 0.5rem;
-      align-items: center;
-
-      & .input-container {
-        display: flex;
-        gap: 0.5rem;
-        align-items: stretch;
-        justify-content: space-between;
-        background-color: var(--input);
-        border-radius: var(--border-radius);
-        border: 1px solid var(--border);
-        overflow: hidden;
-        box-shadow: 0 0.2rem 0.3rem rgba(0, 0, 0, 0.1);
-        min-height: 2.5rem;
-        flex: 1;
-
-        & #generated-password {
-          font-family: var(--font-mono);
-        }
-
-        & > input {
-          background-color: transparent;
-          border: none;
-          flex: 1;
-          display: inline-block;
-          position: relative;
-          padding: 0 1rem;
-          border-radius: inherit;
-          font-family: inherit;
-          font-size: inherit;
-
-          &:focus {
-            outline: none;
-          }
-        }
-
-        & > .actions {
-          display: flex;
-          gap: 0.25rem;
-          align-items: center;
-          padding: 0.3rem;
-
-          & > button {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            aspect-ratio: 1;
-            background-color: transparent;
-            border-radius: var(--border-radius);
-            color: var(--primary-foreground);
-            border: none;
-            padding: 0.4rem;
-            transition: background-color 0.2s ease-in-out;
-            cursor: pointer;
-
-            &:hover {
-              background-color: var(--primary);
-            }
-          }
-        }
-      }
-
-      & #settings-btn {
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        gap: 0.5rem;
-        background-color: var(--input);
-        border-radius: var(--border-radius);
-        border: 1px solid var(--border);
-        min-height: 2.5rem;
-        aspect-ratio: 1;
-        box-shadow: 0 0.2rem 0.3rem rgba(0, 0, 0, 0.1);
-        cursor: pointer;
-        transition: transform 0.2s ease-in-out;
-
-        &:active {
-          transform: scale(0.95);
-        }
-      }
-    }
-
-    & .password-info {
-      margin-top: 1rem;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      gap: 1rem;
-
-      @media (max-width: 480px) {
-        flex-direction: column;
-        align-items: stretch;
-        gap: 0.5rem;
-      }
-
-      & .strength-meter {
-        flex: 1;
-        display: flex;
-        flex-direction: column;
-        gap: 0.2rem;
-
-        & .strength-label {
-          font-size: 0.8rem;
-          color: var(--secondary-foreground);
-        }
-
-        & .strength-bar {
-          border-radius: calc(0.8rem - var(--border-radius));
-          position: relative;
-          overflow: hidden;
-          background-color: var(--input);
-          border: 1px solid var(--border);
-
-          &::before {
-            content: "";
-            position: absolute;
-            top: 0;
-            left: -50%;
-            width: 50%;
-            height: 100%;
-            background: linear-gradient(
-              120deg,
-              rgba(255, 255, 255, 0) 0%,
-              rgba(255, 255, 255, 0.4) 50%,
-              rgba(255, 255, 255, 0) 100%
-            );
-            animation: shine 2s infinite;
-          }
-
-          & .strength-fill {
-            height: 0.8rem;
-            transition: width 0.3s ease, background-color 0.3s ease;
-
-            &.weak {
-              background-color: var(--danger-foreground);
-            }
-
-            &.average {
-              background-color: var(--warning-foreground);
-            }
-
-            &.strong {
-              background-color: var(--success-foreground);
-            }
-          }
-        }
-      }
-
-      & .character-count {
-        font-size: 0.8rem;
-        color: var(--secondary-foreground);
-        white-space: nowrap;
-
-        @media (max-width: 480px) {
-          text-align: center;
-        }
-      }
-    }
-
-    & .bottom-sheet-container {
-      position: absolute;
-      top: 100dvh;
-      left: 0;
-      right: 0;
-      bottom: 0dvh;
-      height: 100dvh;
-      display: flex;
-      align-items: end;
-      background-color: rgba(0, 0, 0, 0.7);
-
-      &.open {
-        top: 0;
-      }
-
-      & .bottom-sheet {
-        background-color: var(--card);
-        border-radius: var(--border-radius) var(--border-radius) 0 0;
-        display: flex;
-        flex-direction: column;
-        width: 100%;
-        height: fit-content;
-        max-height: 90dvh;
-
-        & #close-bottom-sheet {
-          display: flex;
-          justify-content: center;
-          align-items: center;
-          align-self: end;
-          aspect-ratio: 1;
-          padding: 0.8rem;
-          background-color: var(--danger);
-          color: var(--danger-foreground);
-          border-radius: var(--border-radius);
-          border: 1px solid var(--border);
-          margin: 1rem 1rem 1.5rem 1rem;
-        }
-
-        & .bottom-sheet-body {
-          overflow-y: auto;
-          padding: 1rem;
-
-          & h2 {
-            font-weight: bold;
-            margin-bottom: 1.5rem;
-          }
-
-          & section {
-            display: flex;
-            flex-direction: column;
-            gap: 0.5rem;
-
-            &:not(:last-child) {
-              margin-bottom: 1.5rem;
-            }
-
-            & h3 {
-              font-weight: 600;
-              color: var(--secondary-foreground);
-            }
-
-            & .character-help {
-              font-size: 0.8rem;
-              color: var(--secondary-foreground);
-              margin-bottom: 0.5rem;
-              font-style: italic;
-            }
-
-            & .slider-container {
-              display: flex;
-              align-items: center;
-              gap: 1rem;
-              height: 2rem;
-
-              & .slider-label {
-                font-family: var(--font-mono);
-                font-variant-numeric: tabular-nums;
-                width: 3.5ch;
-              }
-            }
-
-            &#characters-section ul,
-            &#password-type-section ul,
-            &#ui-section ul {
-              display: grid;
-              gap: 0.5rem;
-              list-style-type: none;
-
-              & li label {
-                display: flex;
-                align-items: center;
-                gap: 0.5rem;
-              }
-            }
-
-            &#password-type-section ul {
-              flex-direction: column;
-            }
-
-            &#characters-section ul {
-              grid-template-columns: 1fr 1fr;
-
-              @media (max-width: 480px) {
-                grid-template-columns: 1fr;
-              }
-            }
-
-            &#ui-section ul {
-              grid-template-columns: 1fr 1fr 1fr;
-
-              @media (max-width: 480px) {
-                & li label {
-                  justify-content: center;
-
-                  & .label-text {
-                    display: none;
-                  }
-                }
-              }
-            }
-
-            &#characters-section ul li,
-            &#password-type-section ul li,
-            &#ui-section ul li {
-              position: relative;
-              border: 1px solid var(--border);
-              border-radius: var(--border-radius);
-              min-height: 2.5rem;
-              background-color: var(--input);
-              color: var(--foreground);
-              overflow: hidden;
-              transition: transform 0.2s ease-in-out,
-                box-shadow 0.2s ease-in-out;
-
-              &:hover {
-                transform: translate3d(0.05rem, -0.05rem, 0);
-                box-shadow: -0.15rem 0.15rem 0.1rem 0.05rem rgba(0, 0, 0, 0.1);
-              }
-
-              & label {
-                display: flex;
-                padding: 0.8rem 1rem;
-                align-items: center;
-                border-radius: inherit;
-                cursor: pointer;
-                height: 100%;
-                width: 100%;
-              }
-
-              &:has(input[type="checkbox"]:checked),
-              &:has(input[type="radio"]:checked) {
-                background-color: var(--info);
-                color: var(--info-foreground);
-              }
-
-              &:has(input[type="checkbox"]:disabled),
-              &:has(input[type="radio"]:disabled) {
-                opacity: 0.6;
-                background-color: var(--secondary);
-                color: var(--primary-foreground);
-                box-shadow: none;
-              }
-
-              &:has(input[type="checkbox"]:disabled):hover,
-              &:has(input[type="radio"]:disabled):hover {
-                transform: none;
-              }
-
-              & input[type="checkbox"],
-              & input[type="radio"] {
-                display: none;
-              }
-            }
-
-            &#characters-section ul li,
-            &#password-type-section ul li {
-              &:last-child:nth-child(odd) {
-                grid-column: 1 / -1;
-              }
-            }
-          }
-        }
-      }
-    }
-  }
+  /* Tiled desktop pattern */
+  background-image: repeating-linear-gradient(
+    45deg,
+    rgba(0,0,0,0.04) 0px,
+    rgba(0,0,0,0.04) 1px,
+    transparent 1px,
+    transparent 8px
+  );
 }
 
-@keyframes shine {
-  0% {
-    left: -50%;
-  }
+/* Remove dark‑mode gradient */
+.background-gradient { display: none; }
 
-  100% {
-    left: 100%;
-  }
-}
-
-/* Screen reader only class for accessibility */
+/* ── Screen‑reader only ─────────────────────────────── */
 .sr-only {
-  position: absolute;
-  width: 1px;
-  height: 1px;
-  padding: 0;
-  margin: -1px;
-  overflow: hidden;
-  clip: rect(0, 0, 0, 0);
-  white-space: nowrap;
-  border: 0;
+  position: absolute; width: 1px; height: 1px;
+  padding: 0; margin: -1px; overflow: hidden;
+  clip: rect(0,0,0,0); white-space: nowrap; border: 0;
 }
+
+/* ── Window wrapper ─────────────────────────────────── */
+.win-window {
+  background-color: var(--win-silver);
+  box-shadow: var(--bevel-out);
+  width: 100%;
+  max-width: 500px;
+  display: flex;
+  flex-direction: column;
+}
+
+/* ── Title bar ──────────────────────────────────────── */
+.win-titlebar {
+  background: linear-gradient(
+    to right,
+    var(--win-blue-title) 0%,
+    var(--win-blue-title2) 100%
+  );
+  color: var(--win-text-inv);
+  font-weight: bold;
+  font-size: 11px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 3px 4px 3px 6px;
+  user-select: none;
+  gap: 4px;
+}
+
+.win-titlebar-left {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.win-titlebar-icon {
+  width: 14px;
+  height: 14px;
+  flex-shrink: 0;
+}
+
+.win-titlebar-btns {
+  display: flex;
+  gap: 2px;
+}
+
+.win-titlebar-btns button {
+  width: 16px;
+  height: 14px;
+  background-color: var(--win-silver);
+  color: var(--win-text);
+  border: none;
+  box-shadow: var(--bevel-btn);
+  cursor: pointer;
+  font-size: 9px;
+  font-weight: bold;
+  line-height: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+}
+
+.win-titlebar-btns button:active { box-shadow: var(--bevel-btn-pressed); }
+
+/* ── Menubar ────────────────────────────────────────── */
+.win-menubar {
+  background-color: var(--win-silver);
+  border-bottom: 1px solid var(--win-silver-dark);
+  display: flex;
+  gap: 0;
+  padding: 1px 2px;
+  font-size: 11px;
+}
+
+.win-menubar span {
+  padding: 2px 8px;
+  cursor: default;
+}
+
+.win-menubar span:hover {
+  background-color: var(--win-select);
+  color: var(--win-select-fg);
+}
+
+/* ── Content area ───────────────────────────────────── */
+.win-content {
+  padding: 10px 12px 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+/* ── Header (inside content) ────────────────────────── */
+header {
+  display: none; /* title is in the Win titlebar now */
+}
+
+/* ── Group box ──────────────────────────────────────── */
+.win-group {
+  border: 1px solid var(--win-silver-dark);
+  box-shadow: inset 1px 1px 0 var(--win-silver-light);
+  padding: 8px 10px 10px;
+  position: relative;
+  background-color: var(--win-silver);
+}
+
+.win-group-label {
+  position: absolute;
+  top: -7px;
+  left: 10px;
+  background: var(--win-silver);
+  padding: 0 4px;
+  font-size: 11px;
+  font-weight: bold;
+}
+
+/* ── Override any lingering body > main styles ──────── */
+body > .win-window > .win-content main,
+.win-content main {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  width: 100%;
+  max-width: none;
+  margin: 0;
+  border-radius: 0;
+  color: inherit;
+}
+
+/* ── Generation row ─────────────────────────────────── */
+.generation-container {
+  display: flex;
+  gap: 4px;
+  align-items: stretch;
+}
+
+.input-container {
+  display: flex;
+  flex: 1;
+  align-items: stretch;
+  box-shadow: var(--bevel-in);
+  background-color: var(--win-input-bg);
+  min-height: 24px;
+}
+
+#generated-password {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  background: transparent;
+  border: none;
+  flex: 1;
+  padding: 2px 6px;
+  color: var(--win-text);
+  outline: none;
+}
+
+.actions {
+  display: flex;
+  gap: 2px;
+  align-items: center;
+  padding: 2px;
+  background: var(--win-silver);
+  border-left: 1px solid var(--win-silver-dark);
+}
+
+/* ── Win2k buttons ──────────────────────────────────── */
+.actions > button,
+#settings-btn,
+#close-bottom-sheet,
+.win-btn {
+  background-color: var(--win-silver);
+  color: var(--win-text);
+  border: none;
+  box-shadow: var(--bevel-btn);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 3px 6px;
+  font-family: var(--font-sans);
+  font-size: 11px;
+  min-height: 22px;
+}
+
+.actions > button:active,
+#settings-btn:active,
+#close-bottom-sheet:active,
+.win-btn:active {
+  box-shadow: var(--bevel-btn-pressed);
+  padding-top: 4px;
+  padding-left: 7px;
+}
+
+.actions > button { aspect-ratio: 1; padding: 3px; }
+.actions > button:disabled { opacity: 0.4; cursor: default; }
+.actions > button:disabled:active { box-shadow: var(--bevel-btn); padding-top: 3px; padding-left: 3px; }
+
+#settings-btn {
+  aspect-ratio: 1;
+  min-height: 24px;
+  padding: 4px;
+}
+
+/* ── Strength meter ─────────────────────────────────── */
+.password-info {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
+}
+
+.strength-meter {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.strength-label {
+  font-size: 10px;
+  color: var(--win-text-grey);
+}
+
+.character-count {
+  font-size: 10px;
+  color: var(--win-text-grey);
+  white-space: nowrap;
+}
+
+.strength-bar {
+  box-shadow: var(--bevel-in);
+  background-color: var(--win-silver-mid);
+  height: 10px;
+  overflow: hidden;
+  position: relative;
+}
+
+.strength-bar::before { display: none; }  /* no shine */
+
+.strength-fill {
+  height: 100%;
+  transition: width 0.3s, background-color 0.3s;
+  /* Win2k progress: tiled blocks */
+  background-image: repeating-linear-gradient(
+    to right,
+    transparent 0px,
+    transparent 1px,
+    rgba(0,0,0,0.15) 1px,
+    rgba(0,0,0,0.15) 2px
+  );
+}
+
+.strength-fill.weak    { background-color: var(--win-danger); }
+.strength-fill.average { background-color: var(--win-warn); }
+.strength-fill.strong  { background-color: var(--win-success); }
+
+/* ── Bottom sheet → Win2k Dialog ────────────────────── */
+.bottom-sheet-container {
+  position: fixed;
+  inset: 0;
+  background-color: rgba(0,0,0,0.5);
+  display: none;
+  align-items: center;
+  justify-content: center;
+  z-index: 100;
+}
+
+.bottom-sheet-container.open {
+  display: flex;
+}
+
+.bottom-sheet {
+  background-color: var(--win-silver);
+  box-shadow: var(--bevel-out);
+  width: 380px;
+  max-width: 95vw;
+  max-height: 90vh;
+  display: flex;
+  flex-direction: column;
+  border: none;
+  border-radius: 0;
+}
+
+/* Dialog title bar */
+.bottom-sheet::before {
+  content: "⚙ Password Settings";
+  display: flex;
+  align-items: center;
+  background: linear-gradient(to right, var(--win-blue-title) 0%, var(--win-blue-title2) 100%);
+  color: var(--win-text-inv);
+  font-weight: bold;
+  font-size: 11px;
+  padding: 3px 4px 3px 6px;
+  flex-shrink: 0;
+}
+
+#close-bottom-sheet {
+  position: absolute;
+  top: 3px;
+  right: 4px;
+  z-index: 10;
+  width: 16px;
+  height: 14px;
+  padding: 0;
+  font-size: 9px;
+  font-weight: bold;
+  align-self: unset;
+  margin: 0;
+  border-radius: 0;
+  background-color: var(--win-silver);
+  color: var(--win-text);
+}
+
+/* Wrap bottom-sheet in relative for close btn */
+.bottom-sheet {
+  position: relative;
+}
+
+.bottom-sheet-body {
+  overflow-y: auto;
+  padding: 14px 12px 10px;
+  flex: 1;
+}
+
+.bottom-sheet-body h2 { display: none; }  /* title is in pseudo ::before */
+
+/* ── Sections ───────────────────────────────────────── */
+.bottom-sheet-body section {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-bottom: 14px;
+}
+
+.bottom-sheet-body section h3 {
+  font-weight: bold;
+  font-size: 11px;
+  margin-bottom: 2px;
+  color: var(--win-text);
+}
+
+.character-help {
+  font-size: 10px;
+  color: var(--win-text-grey);
+  font-style: normal !important;
+}
+
+/* ── Slider ─────────────────────────────────────────── */
+.slider-container {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  height: 22px;
+}
+
+.slider-label {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  width: 3.5ch;
+  background: var(--win-input-bg);
+  box-shadow: var(--bevel-in);
+  padding: 1px 3px;
+  text-align: center;
+  color: var(--win-text);
+}
+
+input[type="range"] {
+  flex: 1;
+  appearance: none;
+  -webkit-appearance: none;
+  height: 4px;
+  background: var(--win-silver-mid);
+  box-shadow: var(--bevel-in);
+  border: none;
+  outline: none;
+}
+
+input[type="range"]::-webkit-slider-runnable-track {
+  height: 4px;
+  background: transparent;
+}
+
+input[type="range"]::-moz-range-track {
+  height: 4px;
+  background: transparent;
+}
+
+input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 12px;
+  height: 20px;
+  margin-top: -8px;
+  background: var(--win-silver);
+  box-shadow: var(--bevel-btn);
+  border: none;
+  border-radius: 0;
+  cursor: pointer;
+}
+
+input[type="range"]::-moz-range-thumb {
+  width: 12px;
+  height: 20px;
+  background: var(--win-silver);
+  box-shadow: var(--bevel-btn);
+  border: none;
+  border-radius: 0;
+  cursor: pointer;
+}
+
+/* ── Option lists (checkboxes / radios) ─────────────── */
+#characters-section ul,
+#password-type-section ul,
+#ui-section ul {
+  display: grid;
+  gap: 4px;
+  list-style: none;
+}
+
+#password-type-section ul { grid-template-columns: 1fr; }
+#characters-section ul    { grid-template-columns: 1fr 1fr; }
+#ui-section ul            { grid-template-columns: 1fr 1fr 1fr; }
+
+#characters-section ul li,
+#password-type-section ul li,
+#ui-section ul li {
+  position: relative;
+  background-color: var(--win-silver);
+  box-shadow: var(--bevel-btn);
+  min-height: 22px;
+  overflow: visible;
+  cursor: pointer;
+  transition: none;
+}
+
+#characters-section ul li:hover,
+#password-type-section ul li:hover,
+#ui-section ul li:hover {
+  transform: none;
+  box-shadow: var(--bevel-btn);
+}
+
+#characters-section ul li label,
+#password-type-section ul li label,
+#ui-section ul li label {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  padding: 3px 8px;
+  cursor: pointer;
+  height: 100%;
+  width: 100%;
+  font-size: 11px;
+}
+
+/* hide real checkbox/radio — paint a Win2k one via pseudo */
+#characters-section ul li input[type="checkbox"],
+#password-type-section ul li input[type="radio"],
+#ui-section ul li input[type="radio"] {
+  display: none;
+}
+
+/* Checked state: sunken button + blue bg */
+#characters-section ul li:has(input:checked),
+#password-type-section ul li:has(input:checked),
+#ui-section ul li:has(input:checked) {
+  background-color: var(--win-select);
+  box-shadow: var(--bevel-btn-pressed);
+}
+
+#characters-section ul li:has(input:checked) label,
+#password-type-section ul li:has(input:checked) label,
+#ui-section ul li:has(input:checked) label {
+  color: var(--win-select-fg);
+  padding-top: 4px;
+  padding-left: 9px;
+}
+
+/* Disabled state */
+#characters-section ul li:has(input:disabled),
+#password-type-section ul li:has(input:disabled),
+#ui-section ul li:has(input:disabled) {
+  opacity: 0.5;
+  cursor: not-allowed;
+  box-shadow: var(--bevel-btn);
+}
+
+#characters-section ul li:last-child:nth-child(odd),
+#password-type-section ul li:last-child:nth-child(odd) {
+  grid-column: 1 / -1;
+}
+
+/* ── Dialog bottom button bar ───────────────────────── */
+.win-dialog-footer {
+  border-top: 1px solid var(--win-silver-dark);
+  display: flex;
+  justify-content: flex-end;
+  gap: 6px;
+  padding: 8px 10px;
+}
+
+/* ── Status bar ─────────────────────────────────────── */
+.win-statusbar {
+  border-top: 1px solid var(--win-silver-dark);
+  box-shadow: inset 0 1px 0 var(--win-silver-light);
+  display: flex;
+  gap: 2px;
+  padding: 2px 4px;
+}
+
+.win-statusbar-panel {
+  flex: 1;
+  box-shadow: var(--bevel-in);
+  font-size: 10px;
+  color: var(--win-text);
+  padding: 1px 4px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* ── Scrollbar styling ──────────────────────────────── */
+.bottom-sheet-body::-webkit-scrollbar { width: 16px; }
+.bottom-sheet-body::-webkit-scrollbar-track {
+  background: var(--win-silver-mid);
+  box-shadow: var(--bevel-in);
+}
+.bottom-sheet-body::-webkit-scrollbar-thumb {
+  background: var(--win-silver);
+  box-shadow: var(--bevel-btn);
+}
+.bottom-sheet-body::-webkit-scrollbar-button {
+  background: var(--win-silver);
+  box-shadow: var(--bevel-btn);
+  height: 16px;
+}
+
+/* ── Responsive tweaks ──────────────────────────────── */
+@media (max-width: 480px) {
+  .win-window { max-width: 100%; }
+
+  #characters-section ul { grid-template-columns: 1fr; }
+
+  #ui-section ul li label .label-text { display: none; }
+  #ui-section ul li label { justify-content: center; }
+}
+
+/* ── Animations off — Win2k is instant ─────────────── */
+@keyframes shine { 0%,100% { left: -50%; } }

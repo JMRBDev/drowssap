@@ -101,14 +101,50 @@ PIN. Configure length and characters. Fully client-side." />
   </script>
 </head>
 
-<body class="dark">
+<body>
     <div class="background-gradient"></div>
-    <header>
+
+    <!-- Win2k Window -->
+    <div class="win-window">
+
+      <!-- Title bar -->
+      <div class="win-titlebar">
+        <div class="win-titlebar-left">
+          <!-- tiny lock icon -->
+          <svg class="win-titlebar-icon" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <rect x="4" y="7" width="8" height="7" rx="1" fill="#ffd700"/>
+            <path d="M5 7V5a3 3 0 0 1 6 0v2" stroke="#ffd700" stroke-width="1.5" fill="none"/>
+            <circle cx="8" cy="10.5" r="1" fill="#b8860b"/>
+          </svg>
+          <span>Secure Password Generator — JMRBDev</span>
+        </div>
+        <div class="win-titlebar-btns">
+          <button aria-label="Minimise" title="Minimise">_</button>
+          <button aria-label="Maximise" title="Maximise">□</button>
+          <button aria-label="Close" title="Close" style="background:#c0392b;color:#fff;">✕</button>
+        </div>
+      </div>
+
+      <!-- Menubar -->
+      <div class="win-menubar" role="menubar">
+        <span role="menuitem">File</span>
+        <span role="menuitem">Edit</span>
+        <span role="menuitem">View</span>
+        <span role="menuitem">Help</span>
+      </div>
+
+      <!-- Toolbar -->
+      <header style="display:none;">
         <h1 id="title">Password Generator</h1>
         <p id="subtitle">Create secure passwords instantly.</p>
-    </header>
+      </header>
 
-    <main>
+      <!-- Main content -->
+      <div class="win-content">
+        <div class="win-group" style="padding-top:16px;">
+          <span class="win-group-label">Generated Password</span>
+          <main style="all:unset;display:flex;flex-direction:column;gap:8px;width:100%;">
+
         <div class="generation-container">
             <div class="input-container">
                 <label for="generated-password" class="sr-only">Generated Password</label>
@@ -358,7 +394,42 @@ PIN. Configure length and characters. Fully client-side." />
         </div>
     </main>
 
+          </main><!-- /.win-content inner main -->
+        </div><!-- /.win-group -->
+      </div><!-- /.win-content -->
+
+      <!-- Status bar -->
+      <div class="win-statusbar">
+        <div class="win-statusbar-panel" id="statusbar-msg">Ready</div>
+        <div class="win-statusbar-panel" style="flex:0 0 auto;width:130px;" id="statusbar-strength">Strength: —</div>
+        <div class="win-statusbar-panel" style="flex:0 0 auto;width:90px;" id="statusbar-count">0 chars</div>
+      </div>
+
+    </div><!-- /.win-window -->
+
     <script src="script.js"></script>
+    <script>
+      /* Sync status bar with password info */
+      const _obs = new MutationObserver(() => {
+        const lbl = document.querySelector('.strength-label');
+        const cnt = document.querySelector('#char-count');
+        if (lbl) document.getElementById('statusbar-strength').textContent = 'Strength: ' + (lbl.textContent || '—');
+        if (cnt) document.getElementById('statusbar-count').textContent = cnt.textContent;
+      });
+      document.addEventListener('DOMContentLoaded', () => {
+        const sm = document.querySelector('.strength-meter');
+        if (sm) _obs.observe(sm, { subtree: true, characterData: true, childList: true });
+        /* Copy status message */
+        document.getElementById('copy-btn').addEventListener('click', () => {
+          document.getElementById('statusbar-msg').textContent = 'Password copied to clipboard!';
+          setTimeout(() => { document.getElementById('statusbar-msg').textContent = 'Ready'; }, 2000);
+        });
+        document.getElementById('generate-btn').addEventListener('click', () => {
+          document.getElementById('statusbar-msg').textContent = 'New password generated.';
+          setTimeout(() => { document.getElementById('statusbar-msg').textContent = 'Ready'; }, 1500);
+        });
+      });
+    </script>
 </body>
 
 </html>
