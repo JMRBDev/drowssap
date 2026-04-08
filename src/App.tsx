@@ -1,7 +1,6 @@
 import { useState, useCallback, useEffect } from "react"
 import { useSettings } from "@/hooks/useSettings"
 import { useGenerator } from "@/hooks/useGenerator"
-import { usePresets } from "@/hooks/usePresets"
 import { useClipboard } from "@/hooks/useClipboard"
 import { useHash } from "@/hooks/useHash"
 import { useKeyboardShortcuts } from "@/hooks/useKeyboardShortcuts"
@@ -21,7 +20,7 @@ import { sharePassword } from "@/lib/share"
 import { playGenerateSound } from "@/lib/sound"
 import { validateCharsetOptions } from "@/lib/charsets"
 import { useTheme } from "@/components/theme-provider"
-import type { Preset, Settings as SettingsType } from "@/lib/types"
+import type { Settings as SettingsType } from "@/lib/types"
 import {
   RefreshCw,
   Copy,
@@ -39,7 +38,6 @@ import {
 export function App() {
   const { settings, updateSettings } = useSettings()
   const { activeResult, generate, clearActive } = useGenerator()
-  const { presets, addPreset, removePreset, updatePresetName } = usePresets()
   const { copied, copy, clearCopied } = useClipboard()
   const { hash, formattedHash, generateAndShow, clear: clearHash } = useHash()
   const { theme, setTheme } = useTheme()
@@ -122,14 +120,6 @@ export function App() {
       setHashOpen(true)
     }
   }, [activeResult, generateAndShow])
-
-  const handleApplyPreset = useCallback(
-    (preset: Preset) => {
-      updateSettings(preset.settings)
-      setSettingsOpen(false)
-    },
-    [updateSettings]
-  )
 
   const handleEscape = useCallback(() => {
     setSettingsOpen(false)
@@ -334,11 +324,6 @@ export function App() {
         onOpenChange={setSettingsOpen}
         settings={settings}
         onSettingsChange={handleSettingsChange}
-        presets={presets}
-        onAddPreset={addPreset}
-        onRemovePreset={removePreset}
-        onRenamePreset={updatePresetName}
-        onApplyPreset={handleApplyPreset}
       />
     </div>
   )
