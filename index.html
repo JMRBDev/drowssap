@@ -2,9 +2,71 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+    <meta
+      http-equiv="Content-Security-Policy"
+      content="default-src 'self'; script-src 'self' 'sha256-2tutQZ6p4KH2e6nApVWEQlmrb9aMh5dHwh9YJaBGclc='; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; font-src 'self' data:; connect-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'"
+    />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>vite-app</title>
+    <title>drowssap — Secure Password Generator</title>
+    <meta
+      name="description"
+      content="Generate strong passwords, memorable passphrases, pronounceable passwords, and PINs. Private, offline, and runs entirely in your browser."
+    />
+    <meta
+      name="theme-color"
+      content="#1a1a1a"
+      media="(prefers-color-scheme: dark)"
+    />
+    <meta
+      name="theme-color"
+      content="#ffffff"
+      media="(prefers-color-scheme: light)"
+    />
+
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16.png" />
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+
+    <meta property="og:title" content="drowssap — Secure Password Generator" />
+    <meta
+      property="og:description"
+      content="Generate strong passwords locally. Private, offline, on-device."
+    />
+    <meta property="og:type" content="website" />
+    <meta property="og:locale" content="en_US" />
+    <meta property="og:image" content="/icon-512.png" />
+
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="drowssap — Secure Password Generator" />
+    <meta
+      name="twitter:description"
+      content="Generate strong passwords locally. Private, offline, on-device."
+    />
+    <meta name="twitter:image" content="/icon-512.png" />
+
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta
+      name="apple-mobile-web-app-status-bar-style"
+      content="black-translucent"
+    />
+    <meta name="apple-mobile-web-app-title" content="drowssap" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="msapplication-TileColor" content="#1a1a1a" />
+    <link rel="mask-icon" href="/favicon.svg" color="#1a1a1a" />
+
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "WebApplication",
+        "name": "drowssap",
+        "description": "A secure password generator that runs entirely in your browser. Generate random passwords, memorable passphrases, pronounceable passwords, and PINs.",
+        "applicationCategory": "UtilitiesApplication",
+        "operatingSystem": "Any",
+        "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" },
+        "browserRequirements": "Requires JavaScript. Requires a modern browser with Web Crypto API support."
+      }
+    </script>
   </head>
   <body>
     <div id="root"></div>

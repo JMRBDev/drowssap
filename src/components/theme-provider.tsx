@@ -85,9 +85,13 @@ export function ThemeProvider({
   ...props
 }: ThemeProviderProps) {
   const [theme, setThemeState] = React.useState<Theme>(() => {
-    const storedTheme = localStorage.getItem(storageKey)
-    if (isTheme(storedTheme)) {
-      return storedTheme
+    try {
+      const storedTheme = localStorage.getItem(storageKey)
+      if (isTheme(storedTheme)) {
+        return storedTheme
+      }
+    } catch {
+      // localStorage unavailable
     }
 
     return defaultTheme
@@ -95,7 +99,11 @@ export function ThemeProvider({
 
   const setTheme = React.useCallback(
     (nextTheme: Theme) => {
-      localStorage.setItem(storageKey, nextTheme)
+      try {
+        localStorage.setItem(storageKey, nextTheme)
+      } catch {
+        // localStorage unavailable or full
+      }
       setThemeState(nextTheme)
     },
     [storageKey]
@@ -167,7 +175,11 @@ export function ThemeProvider({
                 ? "light"
                 : "dark"
 
-        localStorage.setItem(storageKey, nextTheme)
+        try {
+          localStorage.setItem(storageKey, nextTheme)
+        } catch {
+          // localStorage unavailable or full
+        }
         return nextTheme
       })
     }
