@@ -42,14 +42,6 @@ export type Settings = {
   soundEnabled: boolean
 }
 
-export type Preset = {
-  id: string
-  name: string
-  settings: Settings
-  createdAt: number
-  updatedAt: number
-}
-
 export type Composition = {
   letters: number
   numbers: number

@@ -1,12 +1,7 @@
 import { describe, it, expect, beforeEach } from "vitest"
-import {
-  loadSettings,
-  saveSettings,
-  loadPresets,
-  savePresets,
-} from "../storage"
+import { loadSettings, saveSettings } from "../storage"
 import { DEFAULT_SETTINGS } from "@/lib/types"
-import type { Settings, Preset } from "@/lib/types"
+import type { Settings } from "@/lib/types"
 
 describe("loadSettings", () => {
   beforeEach(() => {
@@ -76,52 +71,5 @@ describe("saveSettings + loadSettings roundtrip", () => {
     const loaded = loadSettings()
     expect(loaded.mode).toBe("pin")
     expect(loaded.pin.length).toBe(8)
-  })
-})
-
-describe("loadPresets", () => {
-  beforeEach(() => {
-    localStorage.clear()
-  })
-
-  it("returns empty array when no presets", () => {
-    expect(loadPresets()).toEqual([])
-  })
-
-  it("returns empty array for invalid JSON", () => {
-    localStorage.setItem("drowssap-presets", "bad")
-    expect(loadPresets()).toEqual([])
-  })
-
-  it("returns empty array for non-array value", () => {
-    localStorage.setItem("drowssap-presets", JSON.stringify({ not: "array" }))
-    expect(loadPresets()).toEqual([])
-  })
-})
-
-describe("savePresets + loadPresets roundtrip", () => {
-  beforeEach(() => {
-    localStorage.clear()
-  })
-
-  it("saves and loads presets correctly", () => {
-    const presets: Preset[] = [
-      {
-        id: "test-1",
-        name: "My Preset",
-        settings: { ...DEFAULT_SETTINGS },
-        createdAt: Date.now(),
-        updatedAt: Date.now(),
-      },
-    ]
-    savePresets(presets)
-    const loaded = loadPresets()
-    expect(loaded).toHaveLength(1)
-    expect(loaded[0].name).toBe("My Preset")
-  })
-
-  it("saves empty presets array", () => {
-    savePresets([])
-    expect(loadPresets()).toEqual([])
   })
 })

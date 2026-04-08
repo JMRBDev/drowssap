@@ -37,15 +37,14 @@ export function SettingsSheet({
   return (
     <Drawer open={open} onOpenChange={onOpenChange} direction="right">
       <DrawerContent className="overflow-y-auto">
-        <DrawerHeader className="border-b mb-8">
+        <DrawerHeader className="mb-8 border-b">
           <DrawerTitle>Settings</DrawerTitle>
           <DrawerDescription>
-            Configure generator options, themes, and presets.
+            Configure generator options and themes.
           </DrawerDescription>
         </DrawerHeader>
 
-
-        <div className="flex flex-col h-full gap-8 px-4 pb-8">
+        <div className="flex h-full flex-col gap-8 px-4 pb-8">
           <FieldGroup className="flex-1">
             <Field>
               <FieldTitle>Theme</FieldTitle>
@@ -115,9 +114,7 @@ function SwitchRow({
   return (
     <>
       <Field orientation="horizontal">
-        <FieldLabel>
-          {label}
-        </FieldLabel>
+        <FieldLabel>{label}</FieldLabel>
 
         <FieldContent className="items-end">
           <Switch
@@ -129,11 +126,7 @@ function SwitchRow({
         </FieldContent>
       </Field>
 
-      {hint ? (
-        <FieldDescription>
-          {hint}
-        </FieldDescription>
-      ) : null}
+      {hint ? <FieldDescription>{hint}</FieldDescription> : null}
     </>
   )
 }
