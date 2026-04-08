@@ -4,10 +4,10 @@ import {
   DrawerHeader,
   DrawerTitle,
   DrawerDescription,
+  DrawerFooter,
 } from "@/components/ui/drawer"
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group"
 import { Switch } from "@/components/ui/switch"
-import { Separator } from "@/components/ui/separator"
 import {
   FieldGroup,
   FieldTitle,
@@ -18,6 +18,7 @@ import {
 } from "@/components/ui/field"
 import { useTheme } from "@/components/theme-provider"
 import type { Settings } from "@/lib/types"
+import pkg from "../../package.json"
 
 type SettingsSheetProps = {
   open: boolean
@@ -44,37 +45,37 @@ export function SettingsSheet({
           </DrawerDescription>
         </DrawerHeader>
 
-        <div className="flex h-full flex-col gap-8 px-4 pb-8">
-          <FieldGroup className="flex-1">
-            <Field>
-              <FieldTitle>Theme</FieldTitle>
-              <ToggleGroup
-                type="single"
-                value={theme}
-                onValueChange={(v) => {
-                  if (v) setTheme(v as "light" | "dark" | "system")
-                }}
-                variant="outline"
-                size="sm"
-              >
-                <ToggleGroupItem value="light">Light</ToggleGroupItem>
-                <ToggleGroupItem value="dark">Dark</ToggleGroupItem>
-                <ToggleGroupItem value="system">System</ToggleGroupItem>
-              </ToggleGroup>
-            </Field>
+        <FieldGroup className="flex-1 px-4">
+          <Field>
+            <FieldTitle>Theme</FieldTitle>
+            <ToggleGroup
+              type="single"
+              value={theme}
+              onValueChange={(v) => {
+                if (v) setTheme(v as "light" | "dark" | "system")
+              }}
+              variant="outline"
+              size="sm"
+            >
+              <ToggleGroupItem value="light">Light</ToggleGroupItem>
+              <ToggleGroupItem value="dark">Dark</ToggleGroupItem>
+              <ToggleGroupItem value="system">System</ToggleGroupItem>
+            </ToggleGroup>
+          </Field>
 
-            <SwitchRow
-              label="Play sound on generation"
-              checked={settings.soundEnabled}
-              onCheckedChange={(v) => onSettingsChange({ soundEnabled: v })}
-            />
-          </FieldGroup>
+          <SwitchRow
+            label="Play sound on generation"
+            checked={settings.soundEnabled}
+            onCheckedChange={(v) => onSettingsChange({ soundEnabled: v })}
+          />
+        </FieldGroup>
 
-          <Separator />
-
+        <DrawerFooter className="border-t">
           <FieldGroup>
             <FieldTitle>About &amp; Trust</FieldTitle>
-            <FieldDescription>drowssap v0.0.1</FieldDescription>
+            <FieldDescription>
+              {pkg.name} v{pkg.version}
+            </FieldDescription>
             <FieldDescription>
               Built with Web Crypto API for cryptographically secure randomness.
             </FieldDescription>
@@ -90,9 +91,9 @@ export function SettingsSheet({
               </a>
               .
             </FieldDescription>
-            <FieldDescription>Open source. Audit the code.</FieldDescription>
+            <FieldDescription>Open source, by <a href="https://www.joserosendo.dev" target="_blank">Jose Rosendo</a>.</FieldDescription>
           </FieldGroup>
-        </div>
+        </DrawerFooter>
       </DrawerContent>
     </Drawer>
   )
