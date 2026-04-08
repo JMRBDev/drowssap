@@ -1,6 +1,14 @@
 import { Slider } from "@/components/ui/slider"
 import { Input } from "@/components/ui/input"
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group"
+import { Toggle } from "@/components/ui/toggle"
+import { Alert } from "@/components/ui/alert"
+import {
+  Field,
+  FieldLabel,
+  FieldContent,
+  FieldDescription,
+} from "@/components/ui/field"
 import { cn } from "@/lib/utils"
 import type { Settings } from "@/lib/types"
 import { validateCharsetOptions } from "@/lib/charsets"
@@ -59,22 +67,21 @@ function SliderControl({
   onChange: (value: number) => void
 }) {
   return (
-    <div className="flex items-center gap-3">
-      <span className="w-20 shrink-0 text-xs text-muted-foreground">
-        {label}
-      </span>
-      <Slider
-        value={[value]}
-        min={min}
-        max={max}
-        step={1}
-        onValueChange={([v]) => onChange(v)}
-        className="flex-1"
-      />
-      <span className="w-8 text-right font-mono text-xs tabular-nums">
+    <Field className="items-center gap-3">
+      <FieldLabel>{label}</FieldLabel>
+      <FieldContent>
+        <Slider
+          value={[value]}
+          min={min}
+          max={max}
+          step={1}
+          onValueChange={([v]) => onChange(v)}
+        />
+      </FieldContent>
+      <FieldDescription className="text-end tabular-nums">
         {value}
-      </span>
-    </div>
+      </FieldDescription>
+    </Field>
   )
 }
 
@@ -105,68 +112,93 @@ function RandomControls({
         onChange={(v) => onSettingsChange({ random: { ...s, length: v } })}
       />
       {!validation.valid && (
-        <div className="rounded-none border border-destructive/30 bg-destructive/5 px-3 py-2 text-xs text-destructive">
+        <Alert variant="destructive" className="px-3 py-2 text-xs">
           {validation.warnings.join(". ")}
-        </div>
+        </Alert>
       )}
       <div className="flex flex-wrap gap-2">
-        <ButtonToggle
-          label="a-z"
+        <Toggle
+          variant="outline"
+          size="sm"
           pressed={s.includeLower}
           onPressedChange={(v) =>
             onSettingsChange({ random: { ...s, includeLower: v } })
           }
-        />
-        <ButtonToggle
-          label="A-Z"
+        >
+          a-z
+        </Toggle>
+        <Toggle
+          variant="outline"
+          size="sm"
           pressed={s.includeUpper}
           onPressedChange={(v) =>
             onSettingsChange({ random: { ...s, includeUpper: v } })
           }
-        />
-        <ButtonToggle
-          label="0-9"
+        >
+          A-Z
+        </Toggle>
+        <Toggle
+          variant="outline"
+          size="sm"
           pressed={s.includeNumbers}
           onPressedChange={(v) =>
             onSettingsChange({ random: { ...s, includeNumbers: v } })
           }
-        />
-        <ButtonToggle
-          label="!@#"
+        >
+          0-9
+        </Toggle>
+        <Toggle
+          variant="outline"
+          size="sm"
           pressed={s.includeSymbols}
           onPressedChange={(v) =>
             onSettingsChange({ random: { ...s, includeSymbols: v } })
           }
-        />
-        <ButtonToggle
-          label="Start w/ letter"
+        >
+          !@#
+        </Toggle>
+        <Toggle
+          variant="outline"
+          size="sm"
           pressed={s.startWithLetter}
           disabled={!canStartWithLetter}
           onPressedChange={(v) =>
             onSettingsChange({ random: { ...s, startWithLetter: v } })
           }
-        />
-        <ButtonToggle
-          label="No ambiguous"
+        >
+          Start w/ letter
+        </Toggle>
+        <Toggle
+          variant="outline"
+          size="sm"
           pressed={s.excludeAmbiguous}
           onPressedChange={(v) =>
             onSettingsChange({ random: { ...s, excludeAmbiguous: v } })
           }
-        />
+        >
+          No ambiguous
+        </Toggle>
       </div>
       {!canStartWithLetter && (
         <p className="text-[11px] text-muted-foreground">
           Enable lowercase or uppercase letters to use start-with-letter.
         </p>
       )}
-      <InlineInputRow
-        label="Exclude"
-        value={s.customExclusions}
-        onChange={(value) =>
-          onSettingsChange({ random: { ...s, customExclusions: value } })
-        }
-        placeholder="e.g. 0OoIl1"
-      />
+      <Field>
+        <FieldLabel>Exclude</FieldLabel>
+        <FieldContent>
+          <Input
+            value={s.customExclusions}
+            onChange={(event) => {
+              onSettingsChange({
+                random: { ...s, customExclusions: event.target.value },
+              })
+            }}
+            placeholder="e.g. 0OoIl1"
+            className="h-7 font-mono text-xs"
+          />
+        </FieldContent>
+      </Field>
     </>
   )
 }
@@ -212,7 +244,7 @@ function MemorableControls({
           </ToggleGroup>
         </div>
         <div className="flex items-center gap-1.5">
-          <span className="text-xs text-muted-foreground">Sep:</span>
+          <span className="text-xs text-muted-foreground">Separator:</span>
           <ToggleGroup
             type="single"
             value={s.separator}
@@ -237,29 +269,40 @@ function MemorableControls({
             <ToggleGroupItem value="space">⎵</ToggleGroupItem>
             <ToggleGroupItem value="dot">.</ToggleGroupItem>
             <ToggleGroupItem value="underscore">_</ToggleGroupItem>
-            <ToggleGroupItem value="custom">...</ToggleGroupItem>
+            <ToggleGroupItem value="custom">Custom</ToggleGroupItem>
           </ToggleGroup>
         </div>
-        <ButtonToggle
-          label="Leet"
+        <Toggle
+          variant="outline"
+          size="sm"
           pressed={s.leet}
           onPressedChange={(v) =>
             onSettingsChange({ memorable: { ...s, leet: v } })
           }
-        />
+        >
+          L33t syntax
+        </Toggle>
       </div>
       {s.separator === "custom" && (
-        <InlineInputRow
-          label="Custom sep"
-          value={s.customSeparator}
-          onChange={(value) =>
-            onSettingsChange({
-              memorable: { ...s, customSeparator: value.slice(0, 8) },
-            })
-          }
-          placeholder="Custom (max 8)"
-          maxLength={8}
-        />
+        <Field>
+          <FieldLabel>Custom separator</FieldLabel>
+          <FieldContent>
+            <Input
+              value={s.customSeparator}
+              onChange={(event) => {
+                onSettingsChange({
+                  memorable: {
+                    ...s,
+                    customSeparator: event.target.value.slice(0, 8),
+                  },
+                })
+              }}
+              placeholder="Custom (max 8)"
+              maxLength={8}
+              className="h-7 font-mono text-xs"
+            />
+          </FieldContent>
+        </Field>
       )}
     </>
   )
@@ -307,36 +350,51 @@ function PronounceableControls({
             <ToggleGroupItem value="mixed">AbC</ToggleGroupItem>
           </ToggleGroup>
         </div>
-        <ButtonToggle
-          label="Numbers"
+        <Toggle
+          variant="outline"
+          size="sm"
           pressed={s.includeNumbers}
           onPressedChange={(v) =>
             onSettingsChange({ pronounceable: { ...s, includeNumbers: v } })
           }
-        />
-        <ButtonToggle
-          label="Symbols"
+        >
+          Numbers
+        </Toggle>
+        <Toggle
+          variant="outline"
+          size="sm"
           pressed={s.includeSymbols}
           onPressedChange={(v) =>
             onSettingsChange({ pronounceable: { ...s, includeSymbols: v } })
           }
-        />
-        <ButtonToggle
-          label="No ambiguous"
+        >
+          Symbols
+        </Toggle>
+        <Toggle
+          variant="outline"
+          size="sm"
           pressed={s.excludeAmbiguous}
           onPressedChange={(v) =>
             onSettingsChange({ pronounceable: { ...s, excludeAmbiguous: v } })
           }
-        />
+        >
+          No ambiguous
+        </Toggle>
       </div>
-      <InlineInputRow
-        label="Exclude"
-        value={s.customExclusions}
-        onChange={(value) =>
-          onSettingsChange({ pronounceable: { ...s, customExclusions: value } })
-        }
-        placeholder="e.g. 0OoIl1"
-      />
+      <Field>
+        <FieldLabel>Exclude</FieldLabel>
+        <FieldContent>
+          <Input
+            value={s.customExclusions}
+            onChange={(event) => {
+              onSettingsChange({
+                pronounceable: { ...s, customExclusions: event.target.value },
+              })
+            }}
+            placeholder="e.g. 0OoIl1"
+          />
+        </FieldContent>
+      </Field>
     </>
   )
 }
@@ -357,65 +415,5 @@ function PinControls({
       max={128}
       onChange={(v) => onSettingsChange({ pin: { ...s, length: v } })}
     />
-  )
-}
-
-function InlineInputRow({
-  label,
-  value,
-  onChange,
-  placeholder,
-  maxLength,
-}: {
-  label: string
-  value: string
-  onChange: (value: string) => void
-  placeholder: string
-  maxLength?: number
-}) {
-  return (
-    <div className="flex items-center gap-2">
-      <span className="w-16 shrink-0 text-xs text-muted-foreground">
-        {label}
-      </span>
-      <Input
-        value={value}
-        onChange={(e) => onChange(e.target.value)}
-        placeholder={placeholder}
-        className="h-7 font-mono text-xs"
-        maxLength={maxLength}
-      />
-    </div>
-  )
-}
-
-function ButtonToggle({
-  label,
-  pressed,
-  disabled = false,
-  onPressedChange,
-}: {
-  label: string
-  pressed: boolean
-  disabled?: boolean
-  onPressedChange: (pressed: boolean) => void
-}) {
-  return (
-    <button
-      type="button"
-      role="switch"
-      aria-checked={pressed}
-      disabled={disabled}
-      onClick={() => onPressedChange(!pressed)}
-      className={cn(
-        "inline-flex h-7 items-center justify-center border px-2.5 text-xs font-medium transition-all select-none",
-        pressed
-          ? "border-input bg-muted text-foreground"
-          : "border-border bg-background text-muted-foreground hover:bg-muted/50 hover:text-foreground",
-        disabled && "pointer-events-none opacity-50"
-      )}
-    >
-      {label}
-    </button>
   )
 }

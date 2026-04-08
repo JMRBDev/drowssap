@@ -82,18 +82,20 @@ export function PasswordDisplay({
   return (
     <div
       className={cn(
-        "flex min-h-16 items-center justify-center rounded-none border border-border bg-background px-4 py-3 font-mono text-xl leading-relaxed tracking-wide break-all transition-colors",
+        "overflow-x-auto border bg-background py-4 font-mono text-xl tracking-wide",
         className
       )}
       role="textbox"
       aria-label="Generated password"
       aria-readonly="true"
     >
-      {segments.map(({ char, type, key }) => (
-        <span key={key} className={cn(CHAR_COLORS[type])}>
-          {char === " " ? "\u00A0" : char}
-        </span>
-      ))}
+      <div className="flex w-max items-center justify-center px-4">
+        {segments.map(({ char, type, key }) => (
+          <span key={key} className={cn(CHAR_COLORS[type])}>
+            {char === " " ? "\u00A0" : char}
+          </span>
+        ))}
+      </div>
       {compositionDescription ? (
         <span className="sr-only">{compositionDescription}</span>
       ) : null}

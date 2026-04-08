@@ -15,6 +15,8 @@ import { HashModal } from "@/components/HashModal"
 import { SettingsSheet } from "@/components/SettingsSheet"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
+import { Kbd } from "@/components/ui/kbd"
+import { Alert } from "@/components/ui/alert"
 import { sharePassword } from "@/lib/share"
 import { playGenerateSound } from "@/lib/sound"
 import { validateCharsetOptions } from "@/lib/charsets"
@@ -36,11 +38,7 @@ import {
 
 export function App() {
   const { settings, updateSettings } = useSettings()
-  const {
-    activeResult,
-    generate,
-    clearActive,
-  } = useGenerator()
+  const { activeResult, generate, clearActive } = useGenerator()
   const { presets, addPreset, removePreset, updatePresetName } = usePresets()
   const { copied, copy, clearCopied } = useClipboard()
   const { hash, formattedHash, generateAndShow, clear: clearHash } = useHash()
@@ -215,7 +213,6 @@ export function App() {
               <div className="flex flex-col gap-1">
                 <StrengthBar
                   entropyBits={activeResult.entropyBits}
-                  mode={settings.mode}
                 />
                 <CrackTimeDisplay
                   crackTimeEstimate={activeResult.crackTimeEstimate}
@@ -253,9 +250,12 @@ export function App() {
                 {copied ? "Copied!" : "Copy"}
               </Button>
               {copyFailed ? (
-                <span className="self-center text-xs text-destructive">
+                <Alert
+                  variant="destructive"
+                  className="self-center px-2 py-1 text-xs"
+                >
                   {copyFailed}
-                </span>
+                </Alert>
               ) : null}
               {activeResult && (
                 <>
@@ -313,9 +313,7 @@ export function App() {
         <div className="mx-auto flex max-w-[75ch] items-center justify-between text-[10px] text-muted-foreground">
           <span>Generated locally. No data leaves your browser.</span>
           <span>
-            <kbd className="rounded-none border px-1 font-mono">⌘G</kbd>{" "}
-            generate{" "}
-            <kbd className="rounded-none border px-1 font-mono">⌘C</kbd> copy
+            <Kbd>⌘G</Kbd> generate <Kbd>⌘C</Kbd> copy
           </span>
         </div>
       </footer>

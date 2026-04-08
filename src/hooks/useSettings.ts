@@ -43,9 +43,12 @@ export function useSettings() {
   }, [settings])
 
   const updateSettings = useCallback((partial: DeepPartial<Settings>) => {
-    const newSettings = deepMerge(settings, partial)
-    setSettings(() => newSettings)
-    return newSettings
+    let newSettings: Settings
+    setSettings((prev) => {
+      newSettings = deepMerge(prev, partial)
+      return newSettings
+    })
+    return newSettings!
   }, [])
 
   const resetSettings = useCallback(() => {
