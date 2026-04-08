@@ -237,7 +237,7 @@ export function App() {
                 ) : (
                   <Copy className="size-3.5" data-icon="inline-start" />
                 )}
-                {copied ? "Copied!" : "Copy"}
+                {copied ? "Copied" : "Copy"}
               </Button>
               {copyFailed ? (
                 <Alert

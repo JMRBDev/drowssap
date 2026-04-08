@@ -73,7 +73,7 @@ export function HashModal({
               ) : (
                 <Copy className="size-3" data-icon="inline-start" />
               )}
-              {copied ? "Copied!" : "Copy Hash"}
+              {copied ? "Copied" : "Copy Hash"}
             </Button>
           </div>
         </div>

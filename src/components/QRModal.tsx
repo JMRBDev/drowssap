@@ -123,7 +123,7 @@ export function QRModal({ open, onOpenChange, value }: QRModalProps) {
             ) : (
               <Copy className="size-3" data-icon="inline-start" />
             )}
-            {copied ? "Copied!" : "Copy Password"}
+            {copied ? "Copied" : "Copy Password"}
           </Button>
         </div>
       </DialogContent>
