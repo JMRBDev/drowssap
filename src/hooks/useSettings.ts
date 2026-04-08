@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from "react"
+import { useState, useCallback } from "react"
 import { loadSettings, saveSettings } from "@/lib/storage"
 import type { Settings } from "@/lib/types"
 import { DEFAULT_SETTINGS } from "@/lib/types"
@@ -38,21 +38,20 @@ function deepMerge<T extends Record<string, unknown>>(
 export function useSettings() {
   const [settings, setSettings] = useState<Settings>(loadSettings)
 
-  useEffect(() => {
-    saveSettings(settings)
-  }, [settings])
-
   const updateSettings = useCallback((partial: DeepPartial<Settings>) => {
     let newSettings: Settings
     setSettings((prev) => {
       newSettings = deepMerge(prev, partial)
       return newSettings
     })
+    saveSettings(newSettings!)
     return newSettings!
   }, [])
 
   const resetSettings = useCallback(() => {
-    setSettings({ ...DEFAULT_SETTINGS })
+    const newSettings = { ...DEFAULT_SETTINGS }
+    setSettings(newSettings)
+    saveSettings(newSettings)
   }, [])
 
   return { settings, updateSettings, resetSettings } as const

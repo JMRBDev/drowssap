@@ -1,4 +1,5 @@
-import { useEffect } from "react"
+import { useMountEffect } from "@/hooks/useMountEffect"
+import { useLatest } from "@/hooks/useLatest"
 
 function isEditableTarget(target: EventTarget | null): boolean {
   if (!(target instanceof HTMLElement)) return false
@@ -18,7 +19,9 @@ type ShortcutHandlers = {
 }
 
 export function useKeyboardShortcuts(handlers: ShortcutHandlers) {
-  useEffect(() => {
+  const handlersRef = useLatest(handlers)
+
+  useMountEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.repeat) return
       if (isEditableTarget(e.target)) return
@@ -27,23 +30,23 @@ export function useKeyboardShortcuts(handlers: ShortcutHandlers) {
 
       if (mod && e.key.toLowerCase() === "g") {
         e.preventDefault()
-        handlers.onGenerate()
+        handlersRef.current.onGenerate()
         return
       }
 
       if (mod && e.key.toLowerCase() === "c" && !hasSelection()) {
         e.preventDefault()
-        handlers.onCopy()
+        handlersRef.current.onCopy()
         return
       }
 
       if (e.key === "Escape") {
         e.preventDefault()
-        handlers.onEscape()
+        handlersRef.current.onEscape()
       }
     }
 
     window.addEventListener("keydown", handleKeyDown)
     return () => window.removeEventListener("keydown", handleKeyDown)
-  }, [handlers])
+  })
 }

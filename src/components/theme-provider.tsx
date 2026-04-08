@@ -1,5 +1,7 @@
 /* eslint-disable react-refresh/only-export-components */
 import * as React from "react"
+import { useMountEffect } from "@/hooks/useMountEffect"
+import { useLatest } from "@/hooks/useLatest"
 
 type Theme = "dark" | "light" | "system"
 type ResolvedTheme = "dark" | "light"
@@ -77,6 +79,26 @@ function isEditableTarget(target: EventTarget | null) {
   return false
 }
 
+function SystemThemeListener({
+  applyTheme,
+}: {
+  applyTheme: (theme: Theme) => void
+}) {
+  useMountEffect(() => {
+    const mediaQuery = window.matchMedia(COLOR_SCHEME_QUERY)
+    const handleChange = () => {
+      applyTheme("system")
+    }
+
+    mediaQuery.addEventListener("change", handleChange)
+
+    return () => {
+      mediaQuery.removeEventListener("change", handleChange)
+    }
+  })
+  return null
+}
+
 export function ThemeProvider({
   children,
   defaultTheme = "system",
@@ -97,18 +119,6 @@ export function ThemeProvider({
     return defaultTheme
   })
 
-  const setTheme = React.useCallback(
-    (nextTheme: Theme) => {
-      try {
-        localStorage.setItem(storageKey, nextTheme)
-      } catch {
-        // localStorage unavailable or full
-      }
-      setThemeState(nextTheme)
-    },
-    [storageKey]
-  )
-
   const applyTheme = React.useCallback(
     (nextTheme: Theme) => {
       const root = document.documentElement
@@ -128,26 +138,34 @@ export function ThemeProvider({
     [disableTransitionOnChange]
   )
 
-  React.useEffect(() => {
+  const updateTheme = React.useCallback(
+    (nextTheme: Theme) => {
+      setThemeState(nextTheme)
+      applyTheme(nextTheme)
+    },
+    [applyTheme]
+  )
+
+  const setTheme = React.useCallback(
+    (nextTheme: Theme) => {
+      try {
+        localStorage.setItem(storageKey, nextTheme)
+      } catch {
+        // localStorage unavailable or full
+      }
+      updateTheme(nextTheme)
+    },
+    [storageKey, updateTheme]
+  )
+
+  const storageKeyRef = useLatest(storageKey)
+  const defaultThemeRef = useLatest(defaultTheme)
+
+  useMountEffect(() => {
     applyTheme(theme)
+  })
 
-    if (theme !== "system") {
-      return undefined
-    }
-
-    const mediaQuery = window.matchMedia(COLOR_SCHEME_QUERY)
-    const handleChange = () => {
-      applyTheme("system")
-    }
-
-    mediaQuery.addEventListener("change", handleChange)
-
-    return () => {
-      mediaQuery.removeEventListener("change", handleChange)
-    }
-  }, [theme, applyTheme])
-
-  React.useEffect(() => {
+  useMountEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
       if (event.repeat) {
         return
@@ -176,10 +194,11 @@ export function ThemeProvider({
                 : "dark"
 
         try {
-          localStorage.setItem(storageKey, nextTheme)
+          localStorage.setItem(storageKeyRef.current, nextTheme)
         } catch {
           // localStorage unavailable or full
         }
+        applyTheme(nextTheme)
         return nextTheme
       })
     }
@@ -189,24 +208,24 @@ export function ThemeProvider({
     return () => {
       window.removeEventListener("keydown", handleKeyDown)
     }
-  }, [storageKey])
+  })
 
-  React.useEffect(() => {
+  useMountEffect(() => {
     const handleStorageChange = (event: StorageEvent) => {
       if (event.storageArea !== localStorage) {
         return
       }
 
-      if (event.key !== storageKey) {
+      if (event.key !== storageKeyRef.current) {
         return
       }
 
       if (isTheme(event.newValue)) {
-        setThemeState(event.newValue)
+        updateTheme(event.newValue)
         return
       }
 
-      setThemeState(defaultTheme)
+      updateTheme(defaultThemeRef.current)
     }
 
     window.addEventListener("storage", handleStorageChange)
@@ -214,7 +233,7 @@ export function ThemeProvider({
     return () => {
       window.removeEventListener("storage", handleStorageChange)
     }
-  }, [defaultTheme, storageKey])
+  })
 
   const value = React.useMemo(
     () => ({
@@ -227,6 +246,7 @@ export function ThemeProvider({
   return (
     <ThemeProviderContext.Provider {...props} value={value}>
       {children}
+      {theme === "system" && <SystemThemeListener applyTheme={applyTheme} />}
     </ThemeProviderContext.Provider>
   )
 }

@@ -1,10 +1,11 @@
-import { useState, useCallback, useEffect } from "react"
+import { useState, useCallback, useRef } from "react"
 import { useSettings } from "@/hooks/useSettings"
 import { useGenerator } from "@/hooks/useGenerator"
 import { useClipboard } from "@/hooks/useClipboard"
 import { useHash } from "@/hooks/useHash"
 import { useKeyboardShortcuts } from "@/hooks/useKeyboardShortcuts"
-import { usePasswordAge } from "@/hooks/usePasswordAge"
+import { PasswordAge } from "@/hooks/usePasswordAge"
+import { useMountEffect } from "@/hooks/useMountEffect"
 import { PasswordDisplay } from "@/components/PasswordDisplay"
 import { ModeSelector } from "@/components/ModeSelector"
 import { StrengthBar, CrackTimeDisplay } from "@/components/StrengthBar"
@@ -46,8 +47,7 @@ export function App() {
   const [qrOpen, setQrOpen] = useState(false)
   const [hashOpen, setHashOpen] = useState(false)
   const [copyFailed, setCopyFailed] = useState<string | null>(null)
-
-  const age = usePasswordAge(activeResult?.createdAt ?? null)
+  const copyFailTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
 
   const handleGenerate = useCallback(() => {
     if (settings.mode === "random") {
@@ -79,9 +79,10 @@ export function App() {
 
   const handleSettingsChange = useCallback(
     (partial: Partial<SettingsType>) => {
-      updateSettings(partial)
+      const newSettings = updateSettings(partial)
+      generate(newSettings)
     },
-    [updateSettings]
+    [updateSettings, generate]
   )
 
   const handleCopy = useCallback(async () => {
@@ -89,16 +90,18 @@ export function App() {
       return false
     }
     const success = await copy(activeResult.value)
-    setCopyFailed(success ? null : "Copy failed - permission denied")
+    if (copyFailTimerRef.current) {
+      clearTimeout(copyFailTimerRef.current)
+      copyFailTimerRef.current = null
+    }
+    if (success) {
+      setCopyFailed(null)
+    } else {
+      setCopyFailed("Copy failed - permission denied")
+      copyFailTimerRef.current = setTimeout(() => setCopyFailed(null), 3000)
+    }
     return success
   }, [activeResult, copy])
-
-  useEffect(() => {
-    if (!copyFailed) return
-
-    const timeout = setTimeout(() => setCopyFailed(null), 3000)
-    return () => clearTimeout(timeout)
-  }, [copyFailed])
 
   const handleShare = useCallback(async () => {
     if (activeResult) {
@@ -133,9 +136,9 @@ export function App() {
     onEscape: handleEscape,
   })
 
-  useEffect(() => {
+  useMountEffect(() => {
     generate(settings)
-  }, [generate, settings])
+  })
 
   return (
     <div className="flex min-h-dvh flex-col bg-background">
@@ -205,8 +208,11 @@ export function App() {
                 <CrackTimeDisplay
                   crackTimeEstimate={activeResult.crackTimeEstimate}
                 />
-                {age && (
-                  <p className="text-[10px] text-muted-foreground/60">{age}</p>
+                {activeResult.createdAt != null && (
+                  <PasswordAge
+                    key={activeResult.createdAt}
+                    createdAt={activeResult.createdAt}
+                  />
                 )}
               </div>
             )}

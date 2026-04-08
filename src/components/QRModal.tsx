@@ -1,4 +1,4 @@
-import { useState, useCallback, useEffect, useRef } from "react"
+import { useState, useCallback, useRef } from "react"
 import QRCode from "qrcode"
 import {
   Dialog,
@@ -10,6 +10,7 @@ import {
 import { Button } from "@/components/ui/button"
 import { copyToClipboard, scheduleClipboardClear } from "@/lib/clipboard"
 import { Copy, Check } from "lucide-react"
+import { useMountEffect } from "@/hooks/useMountEffect"
 
 type QRModalProps = {
   open: boolean
@@ -18,60 +19,44 @@ type QRModalProps = {
 }
 
 export function QRModal({ open, onOpenChange, value }: QRModalProps) {
+  return (
+    <Dialog open={open} onOpenChange={onOpenChange}>
+      <DialogContent className="sm:max-w-sm">
+        <QRModalContent value={value} />
+      </DialogContent>
+    </Dialog>
+  )
+}
+
+function QRModalContent({ value }: { value: string | null }) {
   const [qrDataUrl, setQrDataUrl] = useState<string | null>(null)
   const [error, setError] = useState(false)
   const [copied, setCopied] = useState(false)
   const cancelClipboardClearRef = useRef<(() => void) | null>(null)
 
-  useEffect(() => {
-    if (!open || !value) return
-
-    let cancelled = false
+  useMountEffect(() => {
+    if (!value) return
     QRCode.toDataURL(value, {
       width: 256,
       margin: 2,
-      errorCorrectionLevel: "M",
     })
       .then((url) => {
-        if (!cancelled) {
-          setQrDataUrl(url)
-          setError(false)
-        }
+        setQrDataUrl(url)
+        setError(false)
       })
       .catch(() => {
-        if (!cancelled) {
-          setError(true)
-          setQrDataUrl(null)
-        }
-      })
-    return () => {
-      cancelled = true
-    }
-  }, [open, value])
-
-  const handleOpenChange = useCallback(
-    (nextOpen: boolean) => {
-      if (!nextOpen) {
+        setError(true)
         setQrDataUrl(null)
-        setCopied(false)
-        setError(false)
-        if (cancelClipboardClearRef.current) {
-          cancelClipboardClearRef.current()
-          cancelClipboardClearRef.current = null
-        }
-      }
-      onOpenChange(nextOpen)
-    },
-    [onOpenChange]
-  )
+      })
+  })
 
-  useEffect(() => {
+  useMountEffect(() => {
     return () => {
       if (cancelClipboardClearRef.current) {
         cancelClipboardClearRef.current()
       }
     }
-  }, [])
+  })
 
   const handleCopy = useCallback(async () => {
     if (!value) return
@@ -90,53 +75,48 @@ export function QRModal({ open, onOpenChange, value }: QRModalProps) {
     value && value.length > 8 ? `${value.slice(0, 8)}...` : value
 
   return (
-    <Dialog open={open} onOpenChange={handleOpenChange}>
-      <DialogContent className="sm:max-w-sm">
-        <DialogHeader>
-          <DialogTitle>QR Code Transfer</DialogTitle>
-          <DialogDescription>
-            Scan this QR code to transfer the password to another device. Be
-            aware of shoulder-surfing.
-          </DialogDescription>
-        </DialogHeader>
-        <div className="flex flex-col items-center gap-4 py-2">
-          {passwordLabel ? (
-            <p className="max-w-full truncate font-mono text-xs text-muted-foreground">
-              Password: {passwordLabel}
-            </p>
-          ) : null}
-          {error ? (
-            <p className="text-sm text-destructive">
-              Could not generate QR code. The password may be too long.
-            </p>
-          ) : qrDataUrl ? (
-            <img
-              src={qrDataUrl}
-              alt="QR code containing the generated password"
-              className="size-56 rounded-none border border-border"
-            />
-          ) : null}
-          <p className="text-center text-xs text-muted-foreground">
-            Generated locally. No data sent externally.
+    <>
+      <DialogHeader>
+        <DialogTitle>QR Code Transfer</DialogTitle>
+        <DialogDescription>
+          Scan this QR code to transfer the password to another device. Be aware
+          of shoulder-surfing.
+        </DialogDescription>
+      </DialogHeader>
+      <div className="flex flex-col items-center gap-4 py-2">
+        {passwordLabel ? (
+          <p className="max-w-full truncate font-mono text-xs text-muted-foreground">
+            Password: {passwordLabel}
           </p>
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={handleCopy}
-            className="gap-1.5"
-          >
-            {copied ? (
-              <Check
-                className="size-3 text-green-500"
-                data-icon="inline-start"
-              />
-            ) : (
-              <Copy className="size-3" data-icon="inline-start" />
-            )}
-            {copied ? "Copied" : "Copy Password"}
-          </Button>
-        </div>
-      </DialogContent>
-    </Dialog>
+        ) : null}
+        {error ? (
+          <p className="text-sm text-destructive">
+            Could not generate QR code. The password may be too long.
+          </p>
+        ) : qrDataUrl ? (
+          <img
+            src={qrDataUrl}
+            alt="QR code containing the generated password"
+            className="size-56 rounded-none border border-border"
+          />
+        ) : null}
+        <p className="text-center text-xs text-muted-foreground">
+          Generated locally. No data sent externally.
+        </p>
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={handleCopy}
+          className="gap-1.5"
+        >
+          {copied ? (
+            <Check className="size-3 text-green-500" data-icon="inline-start" />
+          ) : (
+            <Copy className="size-3" data-icon="inline-start" />
+          )}
+          {copied ? "Copied" : "Copy Password"}
+        </Button>
+      </div>
+    </>
   )
 }
