@@ -91,7 +91,13 @@ export function SettingsSheet({
               </a>
               .
             </FieldDescription>
-            <FieldDescription>Open source, by <a href="https://www.joserosendo.dev" target="_blank">Jose Rosendo</a>.</FieldDescription>
+            <FieldDescription>
+              Open source, by{" "}
+              <a href="https://www.joserosendo.dev" target="_blank">
+                Jose Rosendo
+              </a>
+              .
+            </FieldDescription>
           </FieldGroup>
         </DrawerFooter>
       </DrawerContent>

@@ -23,37 +23,47 @@ export function QRModal({ open, onOpenChange, value }: QRModalProps) {
   const [copied, setCopied] = useState(false)
   const cancelClipboardClearRef = useRef<(() => void) | null>(null)
 
-  const generateQR = useCallback(async (text: string) => {
-    try {
-      const url = await QRCode.toDataURL(text, {
-        width: 256,
-        margin: 2,
-        errorCorrectionLevel: "M",
-      })
-      setQrDataUrl(url)
-      setError(false)
-    } catch {
-      setError(true)
-      setQrDataUrl(null)
-    }
-  }, [])
-
   useEffect(() => {
-    if (open && value) {
-      void generateQR(value)
-      return
-    }
+    if (!open || !value) return
 
-    if (!open) {
-      setQrDataUrl(null)
-      setCopied(false)
-      setError(false)
-      if (cancelClipboardClearRef.current) {
-        cancelClipboardClearRef.current()
-        cancelClipboardClearRef.current = null
-      }
+    let cancelled = false
+    QRCode.toDataURL(value, {
+      width: 256,
+      margin: 2,
+      errorCorrectionLevel: "M",
+    })
+      .then((url) => {
+        if (!cancelled) {
+          setQrDataUrl(url)
+          setError(false)
+        }
+      })
+      .catch(() => {
+        if (!cancelled) {
+          setError(true)
+          setQrDataUrl(null)
+        }
+      })
+    return () => {
+      cancelled = true
     }
-  }, [open, value, generateQR])
+  }, [open, value])
+
+  const handleOpenChange = useCallback(
+    (nextOpen: boolean) => {
+      if (!nextOpen) {
+        setQrDataUrl(null)
+        setCopied(false)
+        setError(false)
+        if (cancelClipboardClearRef.current) {
+          cancelClipboardClearRef.current()
+          cancelClipboardClearRef.current = null
+        }
+      }
+      onOpenChange(nextOpen)
+    },
+    [onOpenChange]
+  )
 
   useEffect(() => {
     return () => {
@@ -80,7 +90,7 @@ export function QRModal({ open, onOpenChange, value }: QRModalProps) {
     value && value.length > 8 ? `${value.slice(0, 8)}...` : value
 
   return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
+    <Dialog open={open} onOpenChange={handleOpenChange}>
       <DialogContent className="sm:max-w-sm">
         <DialogHeader>
           <DialogTitle>QR Code Transfer</DialogTitle>

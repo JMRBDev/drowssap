@@ -7,10 +7,7 @@ type StrengthBarProps = {
   className?: string
 }
 
-export function StrengthBar({
-  entropyBits,
-  className,
-}: StrengthBarProps) {
+export function StrengthBar({ entropyBits, className }: StrengthBarProps) {
   const tier = getStrengthTier(entropyBits)
 
   return (

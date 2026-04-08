@@ -67,14 +67,14 @@ export function App() {
 
     if (settings.soundEnabled) playGenerateSound()
     generate(settings)
-  }, [settings])
+  }, [settings, generate])
 
   const handleModeChange = useCallback(
     (mode: SettingsType["mode"]) => {
       const newSettings = updateSettings({ mode })
       generate(newSettings)
     },
-    [updateSettings]
+    [updateSettings, generate]
   )
 
   const handleSettingsChange = useCallback(
@@ -135,7 +135,7 @@ export function App() {
 
   useEffect(() => {
     generate(settings)
-  }, [])
+  }, [generate, settings])
 
   return (
     <div className="flex min-h-dvh flex-col bg-background">
@@ -201,9 +201,7 @@ export function App() {
 
             {activeResult && (
               <div className="flex flex-col gap-1">
-                <StrengthBar
-                  entropyBits={activeResult.entropyBits}
-                />
+                <StrengthBar entropyBits={activeResult.entropyBits} />
                 <CrackTimeDisplay
                   crackTimeEstimate={activeResult.crackTimeEstimate}
                 />
