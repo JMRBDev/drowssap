@@ -1,8 +1,20 @@
-# drowssap
+<div align="center">
+  <a href="https://drowssap.joserosendo.dev">
+    <img alt="alt text" src="public/og.png" style="width: 80%;" />
+  </a>
+  
+  # Drowssap
+  
+  **One command. Your entire AI skill stack. Installed.**
+  
+  [https://drowssap.joserosendo.dev](https://drowssap.joserosendo.dev)
+</div>
+
+<br />
 
 A privacy-first password generator that runs entirely in your browser. No data ever leaves your device.
 
-**drowssap** is "password" spelled backwards.
+**Drowssap** is "password" spelled backwards.
 
 ## Features
 
