@@ -92,7 +92,7 @@ export function SettingsSheet({
               .
             </FieldDescription>
             <FieldDescription>
-              Open source, by{" "}
+              <a href="https://github.com/JMRBDev/drowssap" target="_blank">Open source</a>, by{" "}
               <a href="https://www.joserosendo.dev" target="_blank">
                 Jose Rosendo
               </a>
