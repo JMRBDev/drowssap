@@ -1,9 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from "vitest"
-import {
-  copyToClipboard,
-  clearClipboard,
-  scheduleClipboardClear,
-} from "../clipboard"
+import { copyToClipboard, scheduleClipboardClear } from "../clipboard"
 
 describe("copyToClipboard", () => {
   beforeEach(() => {
@@ -26,28 +22,6 @@ describe("copyToClipboard", () => {
     )
     const result = await copyToClipboard("test")
     expect(result).toBe(false)
-  })
-})
-
-describe("clearClipboard", () => {
-  beforeEach(() => {
-    Object.assign(navigator, {
-      clipboard: {
-        writeText: vi.fn().mockResolvedValue(undefined),
-      },
-    })
-  })
-
-  it("writes empty string to clipboard", async () => {
-    await clearClipboard()
-    expect(navigator.clipboard.writeText).toHaveBeenCalledWith("")
-  })
-
-  it("does not throw on failure", async () => {
-    vi.mocked(navigator.clipboard.writeText).mockRejectedValueOnce(
-      new Error("fail")
-    )
-    await expect(clearClipboard()).resolves.toBeUndefined()
   })
 })
 

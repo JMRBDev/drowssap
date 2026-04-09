@@ -7,7 +7,7 @@ export async function copyToClipboard(text: string): Promise<boolean> {
   }
 }
 
-export async function clearClipboard(): Promise<void> {
+async function clearClipboard(): Promise<void> {
   try {
     await navigator.clipboard.writeText("")
   } catch {

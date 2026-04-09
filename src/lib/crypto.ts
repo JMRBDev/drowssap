@@ -39,16 +39,6 @@ export function shuffleArray<T>(array: T[]): T[] {
 }
 
 /**
- * Pick a random element from an array using crypto randomness.
- */
-export function getRandomChoice<T>(array: T[]): T {
-  if (array.length === 0) {
-    throw new Error("Cannot pick from empty array")
-  }
-  return array[getRandomInt(array.length)]
-}
-
-/**
  * Generate a cryptographically secure random UUID.
  */
 export function generateId(): string {

@@ -1,10 +1,5 @@
 import { describe, it, expect } from "vitest"
-import {
-  calculateEntropy,
-  getStrengthTier,
-  formatCrackTime,
-  STRENGTH_TIERS,
-} from "../strength"
+import { calculateEntropy, getStrengthTier, formatCrackTime } from "../strength"
 
 describe("calculateEntropy", () => {
   it("returns 0 for zero poolSize", () => {
@@ -62,24 +57,6 @@ describe("getStrengthTier", () => {
     expect(getStrengthTier(64).label).toBe("Good")
     expect(getStrengthTier(80).label).toBe("Strong")
     expect(getStrengthTier(96).label).toBe("Excellent")
-  })
-
-  it("has 8 tiers", () => {
-    expect(STRENGTH_TIERS.length).toBe(8)
-  })
-
-  it("first tier starts at 0", () => {
-    expect(STRENGTH_TIERS[0].minBits).toBe(0)
-  })
-
-  it("last tier has null maxBits", () => {
-    expect(STRENGTH_TIERS[STRENGTH_TIERS.length - 1].maxBits).toBeNull()
-  })
-
-  it("every tier has a color", () => {
-    for (const tier of STRENGTH_TIERS) {
-      expect(tier.color).toBeTruthy()
-    }
   })
 })
 

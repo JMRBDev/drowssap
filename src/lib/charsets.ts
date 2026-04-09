@@ -1,10 +1,10 @@
-export const LOWERS = "abcdefghijklmnopqrstuvwxyz"
-export const UPPERS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
-export const DIGITS = "0123456789"
-export const SYMBOLS = "!\"#$%&'()*+,-./:;<=>?@[\\]^_`{|}~"
-export const AMBIGUOUS_CHARS = "Il1O0o"
+const LOWERS = "abcdefghijklmnopqrstuvwxyz"
+const UPPERS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+const DIGITS = "0123456789"
+const SYMBOLS = "!\"#$%&'()*+,-./:;<=>?@[\\]^_`{|}~"
+const AMBIGUOUS_CHARS = "Il1O0o"
 
-export type CharsetOptions = {
+type CharsetOptions = {
   includeLower: boolean
   includeUpper: boolean
   includeNumbers: boolean
@@ -13,7 +13,7 @@ export type CharsetOptions = {
   customExclusions: string
 }
 
-export type CharsetValidation = {
+type CharsetValidation = {
   valid: boolean
   warnings: string[]
 }
@@ -46,7 +46,7 @@ export function validateCharsetOptions(
   return { valid: warnings.length === 0, warnings }
 }
 
-export type CharsetResult = {
+type CharsetResult = {
   pool: string
   poolSize: number
   sets: {

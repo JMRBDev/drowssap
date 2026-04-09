@@ -68,14 +68,6 @@ export type StrengthTier = {
   percent: number
 }
 
-export type StrengthInfo = {
-  label: string
-  tier: StrengthTier
-  entropyBits: number
-  crackTimeEstimate: string
-  percent: number
-}
-
 export const DEFAULT_SETTINGS: Settings = {
   version: 1,
   mode: "random",

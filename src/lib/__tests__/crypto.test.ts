@@ -1,10 +1,5 @@
 import { describe, it, expect } from "vitest"
-import {
-  getRandomInt,
-  shuffleArray,
-  getRandomChoice,
-  generateId,
-} from "../crypto"
+import { getRandomInt, shuffleArray, generateId } from "../crypto"
 
 describe("getRandomInt", () => {
   it("returns 0 when max is 1", () => {
@@ -32,7 +27,6 @@ describe("getRandomInt", () => {
     for (let i = 0; i < 400; i++) {
       counts[getRandomInt(4)]++
     }
-    // Each bucket should get roughly 100 ± 50
     for (const count of counts) {
       expect(count).toBeGreaterThan(20)
       expect(count).toBeLessThan(180)
@@ -69,22 +63,6 @@ describe("shuffleArray", () => {
       results.add(shuffleArray(arr).join(","))
     }
     expect(results.size).toBeGreaterThan(1)
-  })
-})
-
-describe("getRandomChoice", () => {
-  it("returns an element from the array", () => {
-    const arr = [10, 20, 30]
-    const result = getRandomChoice(arr)
-    expect(arr).toContain(result)
-  })
-
-  it("throws on empty array", () => {
-    expect(() => getRandomChoice([])).toThrow("Cannot pick from empty array")
-  })
-
-  it("returns the only element for single-element array", () => {
-    expect(getRandomChoice([99])).toBe(99)
   })
 })
 

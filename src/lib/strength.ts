@@ -1,6 +1,6 @@
 import type { StrengthTier } from "@/lib/types"
 
-export const STRENGTH_TIERS: StrengthTier[] = [
+const STRENGTH_TIERS: StrengthTier[] = [
   {
     label: "Awful",
     minBits: 0,

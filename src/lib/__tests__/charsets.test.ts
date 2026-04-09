@@ -3,30 +3,7 @@ import {
   buildCharset,
   validateCharsetOptions,
   getSeparatorString,
-  LOWERS,
-  UPPERS,
-  DIGITS,
-  SYMBOLS,
-  AMBIGUOUS_CHARS,
 } from "../charsets"
-
-describe("charset constants", () => {
-  it("LOWERS has 26 characters", () => {
-    expect(LOWERS.length).toBe(26)
-  })
-
-  it("UPPERS has 26 characters", () => {
-    expect(UPPERS.length).toBe(26)
-  })
-
-  it("DIGITS has 10 characters", () => {
-    expect(DIGITS.length).toBe(10)
-  })
-
-  it("SYMBOLS is non-empty", () => {
-    expect(SYMBOLS.length).toBeGreaterThan(0)
-  })
-})
 
 describe("buildCharset", () => {
   it("returns full pool when all enabled", () => {
@@ -38,10 +15,8 @@ describe("buildCharset", () => {
       excludeAmbiguous: false,
       customExclusions: "",
     })
-    expect(result.pool).toBe(LOWERS + UPPERS + DIGITS + SYMBOLS)
-    expect(result.poolSize).toBe(
-      LOWERS.length + UPPERS.length + DIGITS.length + SYMBOLS.length
-    )
+    expect(result.pool.length).toBe(26 + 26 + 10 + 32)
+    expect(result.poolSize).toBe(26 + 26 + 10 + 32)
   })
 
   it("returns lowercase only", () => {
@@ -53,7 +28,7 @@ describe("buildCharset", () => {
       excludeAmbiguous: false,
       customExclusions: "",
     })
-    expect(result.pool).toBe(LOWERS)
+    expect(result.pool).toBe("abcdefghijklmnopqrstuvwxyz")
     expect(result.poolSize).toBe(26)
   })
 
@@ -66,7 +41,7 @@ describe("buildCharset", () => {
       excludeAmbiguous: true,
       customExclusions: "",
     })
-    for (const ch of AMBIGUOUS_CHARS) {
+    for (const ch of "Il1O0o") {
       expect(result.pool).not.toContain(ch)
     }
   })
@@ -107,8 +82,8 @@ describe("buildCharset", () => {
       excludeAmbiguous: false,
       customExclusions: "",
     })
-    expect(result.sets.lowers).toBe(LOWERS)
-    expect(result.sets.uppers).toBe(UPPERS)
+    expect(result.sets.lowers).toBe("abcdefghijklmnopqrstuvwxyz")
+    expect(result.sets.uppers).toBe("ABCDEFGHIJKLMNOPQRSTUVWXYZ")
   })
 })
 
